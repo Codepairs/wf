@@ -1,7 +1,11 @@
 package com.example.myapp.service.impl;
 
 
+import com.example.myapp.model.Expense;
+import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
+import com.example.myapp.repository.ExpenseRepository;
+import com.example.myapp.repository.IncomeRepository;
 import com.example.myapp.repository.UserRepository;
 import com.example.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private IncomeRepository incomeRepository;
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
     @Override
     public void create(User user) {
@@ -49,6 +57,14 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    public List<Income> getIncomes(Long id) {
+        return incomeRepository.findAllByuser_id(id);
+    }
+
+    public List<Expense> getExpenses(Long id) {
+        return expenseRepository.findAllByuser_id(id);
     }
 }
 

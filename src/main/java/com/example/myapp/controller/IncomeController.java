@@ -1,7 +1,9 @@
 package com.example.myapp.controller;
 
 import com.example.myapp.model.Income;
+import com.example.myapp.model.View;
 import com.example.myapp.service.IncomeService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +21,14 @@ public class IncomeController {
         this.incomeService = incomeService;
     }
 
+
     @PostMapping(value = "/incomes")
     public ResponseEntity<?> create(@RequestBody Income income){
         incomeService.create(income);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
+    @JsonView(View.REST.class)
     @GetMapping(value = "/incomes")
     public ResponseEntity<List<Income>> read() {
         final List<Income> incomes = incomeService.readAll();
@@ -36,6 +39,7 @@ public class IncomeController {
     }
 
 
+    @JsonView(View.REST.class)
     @GetMapping(value = "/incomes/{id}")
     public ResponseEntity<Income> read(@PathVariable(name = "id") Long id) {
         final Income income = incomeService.read(id);
@@ -63,6 +67,4 @@ public class IncomeController {
                 ? new ResponseEntity<>(HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
-
-
 }

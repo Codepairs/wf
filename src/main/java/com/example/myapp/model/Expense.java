@@ -1,6 +1,7 @@
 package com.example.myapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
@@ -9,16 +10,20 @@ import jakarta.persistence.*;
 public class Expense {
     @Id
     @Column(name = "id")
+    @JsonView(View.REST.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "comment")
+    @JsonView(View.REST.class)
     private String comment;
 
     @Column(name = "value")
+    @JsonView(View.REST.class)
     private Float value;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonView(View.REST.class)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

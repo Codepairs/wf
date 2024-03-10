@@ -1,6 +1,7 @@
 package com.example.myapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 public class User {
     @Id
     @Column(name = "id")
+    @JsonView(View.REST.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,7 +29,6 @@ public class User {
     @OneToMany(mappedBy = "user",
               fetch = FetchType.LAZY,
               cascade = CascadeType.ALL)
-    //@JoinColumn(name = "id")
     List<Income> incomes = new ArrayList<>();
 
     public Long getId() {

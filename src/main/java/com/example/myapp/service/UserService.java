@@ -1,5 +1,7 @@
 package com.example.myapp.service;
 
+import com.example.myapp.model.Expense;
+import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 
 import java.util.List;
@@ -39,4 +41,20 @@ public interface UserService {
      * @return - true если клиент был удален, иначе false
      */
     boolean delete(Long id);
+
+
+    /**
+     * Получает все доходы пользователя по его ID
+     * @param user_id - id пользователя, для которого нужно получить доходы
+     * @return - список доходов
+     */
+
+    List<Income> getIncomes(Long user_id);
+
+    /**
+     * Получает все расходы пользователя по его ID
+     * @param user_id - id пользователя, для которого нужно получить расходы
+     * @return - список расходов
+     */
+    List<Expense> getExpenses(Long user_id);
 }

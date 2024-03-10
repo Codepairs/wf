@@ -1,7 +1,11 @@
 package com.example.myapp.controller;
 
+import com.example.myapp.model.Expense;
+import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
+import com.example.myapp.model.View;
 import com.example.myapp.service.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +36,24 @@ public class UserController {
 
         return users != null &&  !users.isEmpty()
                 ? new ResponseEntity<>(users, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @JsonView(View.REST.class)
+    @GetMapping(value = "/users/{id}/incomes")
+    public ResponseEntity<List<Income>> read_incomes(@PathVariable(name = "id") Long id) {
+        List<Income> incomes = userService.getIncomes(id);
+        return incomes != null &&  !incomes.isEmpty()
+                ? new ResponseEntity<>(incomes, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @JsonView(View.REST.class)
+    @GetMapping(value = "/users/{id}/expenses")
+    public ResponseEntity<List<Expense>> read_expenses(@PathVariable(name = "id") Long id) {
+        List<Expense> expenses = userService.getExpenses(id);
+        return expenses != null &&  !expenses.isEmpty()
+                ? new ResponseEntity<>(expenses, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

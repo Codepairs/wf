@@ -1,7 +1,9 @@
 package com.example.myapp.controller;
 
 import com.example.myapp.model.Expense;
+import com.example.myapp.model.View;
 import com.example.myapp.service.ExpenseService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class ExpenseController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
+    @JsonView(View.REST.class)
     @GetMapping(value = "/expenses")
     public ResponseEntity<List<Expense>> read() {
         final List<Expense> incomes = expenseService.readAll();
@@ -34,7 +36,7 @@ public class ExpenseController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
+    @JsonView(View.REST.class)
     @GetMapping(value = "/expenses/{id}")
     public ResponseEntity<Expense> read(@PathVariable(name = "id") Long id) {
         final Expense income = expenseService.read(id);

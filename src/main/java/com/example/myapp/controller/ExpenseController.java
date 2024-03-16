@@ -16,8 +16,8 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     @Autowired
-    public ExpenseController(ExpenseService incomeService) {
-        this.expenseService = incomeService;
+    public ExpenseController(ExpenseService expenseService) {
+        this.expenseService = expenseService;
     }
 
     @PostMapping(value = "/expenses")
@@ -39,10 +39,10 @@ public class ExpenseController {
     @JsonView(View.REST.class)
     @GetMapping(value = "/expenses/{id}")
     public ResponseEntity<Expense> read(@PathVariable(name = "id") Long id) {
-        final Expense income = expenseService.read(id);
+        final Expense expense = expenseService.read(id);
 
-        return income != null
-                ? new ResponseEntity<>(income, HttpStatus.OK)
+        return expense != null
+                ? new ResponseEntity<>(expense, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

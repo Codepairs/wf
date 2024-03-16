@@ -27,6 +27,13 @@ public class Income {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonView(View.REST.class)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+
     public Float getValue(){
         return this.value;
     }

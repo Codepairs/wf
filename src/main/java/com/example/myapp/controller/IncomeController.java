@@ -49,6 +49,16 @@ public class IncomeController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @JsonView(View.REST.class)
+    @GetMapping(value = "/incomes/category={id}")
+    public ResponseEntity<List<Income>> readByCategoryId(@PathVariable(name = "id") Long id) {
+        final List<Income> incomes = incomeService.readAllByCategoryId(id);
+
+        return incomes != null &&  !incomes.isEmpty()
+                ? new ResponseEntity<>(incomes, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 
     @PutMapping(value = "/incomes/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Income income) {

@@ -30,6 +30,9 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseRepository.getById(id);
     }
 
+    @Override
+    public List<Expense> readAllByCategoryId(Long id) { return expenseRepository.findAllBycategory_id(id); }
+
 
     @Override
     public boolean update(Expense income, Long id) {

@@ -29,10 +29,10 @@ public class ExpenseController {
     @JsonView(View.REST.class)
     @GetMapping(value = "/expenses")
     public ResponseEntity<List<Expense>> read() {
-        final List<Expense> incomes = expenseService.readAll();
+        final List<Expense> expenses = expenseService.readAll();
 
-        return incomes != null &&  !incomes.isEmpty()
-                ? new ResponseEntity<>(incomes, HttpStatus.OK)
+        return expenses != null &&  !expenses.isEmpty()
+                ? new ResponseEntity<>(expenses, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -43,6 +43,16 @@ public class ExpenseController {
 
         return expense != null
                 ? new ResponseEntity<>(expense, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @JsonView(View.REST.class)
+    @GetMapping(value = "/expenses/category={id}")
+    public ResponseEntity<List<Expense>> readByCategoryId(@PathVariable(name = "id") Long id) {
+        final List<Expense> expenses = expenseService.readAllByCategoryId(id);
+
+        return expenses != null &&  !expenses.isEmpty()
+                ? new ResponseEntity<>(expenses, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

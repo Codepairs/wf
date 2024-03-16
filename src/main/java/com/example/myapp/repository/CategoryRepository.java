@@ -2,6 +2,7 @@ package com.example.myapp.repository;
 
 
 import com.example.myapp.model.Category;
+import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

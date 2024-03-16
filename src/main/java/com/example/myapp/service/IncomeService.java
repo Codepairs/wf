@@ -1,5 +1,6 @@
 package com.example.myapp.service;
 
+import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 
@@ -24,6 +25,15 @@ public interface IncomeService {
      * @return - объект дохода с заданным ID
      */
     Income read(Long id);
+
+
+    /**
+     * Возвращает список всех доходов по ID определенной категории
+     * @param id - ID категории
+     * @return список доходов по этой категории
+     */
+    List<Income> readAllByCategoryId(Long id);
+
 
     /**
      * Обновляет доход с заданным ID,

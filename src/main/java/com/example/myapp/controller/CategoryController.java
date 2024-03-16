@@ -2,7 +2,6 @@ package com.example.myapp.controller;
 
 import com.example.myapp.model.*;
 import com.example.myapp.service.CategoryService;
-import com.example.myapp.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +39,7 @@ public class CategoryController {
     @JsonView(View.REST.class)
     @GetMapping(value = "/categories/{id}/incomes")
     public ResponseEntity<List<Income>> read_incomes(@PathVariable(name = "id") Long id) {
-        List<Income> incomes = categoryService.getIncomes(id);
+        List<Income> incomes = categoryService.getIncomesByUserId(id);
         return incomes != null &&  !incomes.isEmpty()
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -49,7 +48,7 @@ public class CategoryController {
     @JsonView(View.REST.class)
     @GetMapping(value = "/categories/{id}/expenses")
     public ResponseEntity<List<Expense>> read_expenses(@PathVariable(name = "id") Long id) {
-        List<Expense> expenses = categoryService.getExpenses(id);
+        List<Expense> expenses = categoryService.getExpensesByUserId(id);
         return expenses != null &&  !expenses.isEmpty()
                 ? new ResponseEntity<>(expenses, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

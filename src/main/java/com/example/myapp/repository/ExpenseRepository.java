@@ -12,4 +12,8 @@ import java.util.List;
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     List<Expense> findAllByuser_id(Long user_id);
+
+    List<Expense> findAllBycategory_id(Long category_id);
+
+
 }

@@ -4,7 +4,6 @@ package com.example.myapp.service.impl;
 import com.example.myapp.model.Category;
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
-import com.example.myapp.model.User;
 import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.repository.IncomeRepository;
@@ -60,13 +59,22 @@ public class CategoryServiceImpl implements CategoryService {
         return false;
     }
 
-    public List<Income> getIncomes(Long id) {
+    public List<Income> getIncomesByUserId(Long id) {
         return incomeRepository.findAllByuser_id(id);
     }
 
-    public List<Expense> getExpenses(Long id) {
+    public List<Expense> getExpensesByUserId(Long id) {
         return expenseRepository.findAllByuser_id(id);
     }
+
+    public List<Expense> getExpensesByCategoryId(Long id) {
+        return expenseRepository.findAllBycategory_id(id);
+    }
+
+    public List<Income> getIncomesByCategoryId(Long id) {
+        return incomeRepository.findAllBycategory_id(id);
+    }
+
 }
 
 

@@ -1,6 +1,7 @@
 package com.example.myapp.service.impl;
 
 
+import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.repository.IncomeRepository;
 import com.example.myapp.service.IncomeService;
@@ -33,6 +34,9 @@ public class IncomeServiceImpl implements IncomeService {
     public Income read(Long id) {
         return incomeRepository.getById(id);
     }
+
+    @Override
+    public List<Income> readAllByCategoryId(Long id) { return incomeRepository.findAllBycategory_id(id); }
 
 
     @Override

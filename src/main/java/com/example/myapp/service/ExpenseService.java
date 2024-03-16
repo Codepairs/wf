@@ -13,6 +13,7 @@ public interface ExpenseService {
      */
     void create(Expense expense);
 
+
     /**
      * Возвращает список всех имеющихся расходов
      * @return список расходов
@@ -20,11 +21,19 @@ public interface ExpenseService {
     List<Expense> readAll();
 
     /**
-     * Возвращает расхода по его ID
+     * Возвращает расход по его ID
      * @param id - ID расхода
      * @return - объект расхода с заданным ID
      */
     Expense read(Long id);
+
+
+    /**
+     * Возвращает список всех расходов по ID определенной категории
+     * @param id - ID категории
+     * @return список расходов по этой категории
+     */
+    List<Expense> readAllByCategoryId(Long id);
 
     /**
      * Обновляет расход с заданным ID,

@@ -3,7 +3,6 @@ package com.example.myapp.service;
 import com.example.myapp.model.Category;
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
-import com.example.myapp.model.User;
 
 import java.util.List;
 
@@ -50,12 +49,12 @@ public interface CategoryService {
      * @return - список доходов
      */
 
-    List<Income> getIncomes(Long category_id);
+    List<Income> getIncomesByUserId(Long category_id);
 
     /**
      * Получает все расходы из категории по ее ID
      * @param category_id - id категории, для которой нужно получить расходы
      * @return - список расходов
      */
-    List<Expense> getExpenses(Long category_id);
+    List<Expense> getExpensesByUserId(Long category_id);
 }

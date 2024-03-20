@@ -5,29 +5,29 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F6F6"
+    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/aboveLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100px"
+        android:layout_marginTop="35dp"
         android:background="#EBEDFA"
         android:orientation="vertical"
-        android:paddingBottom="50px">
+        android:paddingBottom="20dp">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="70dp"
-            android:layout_marginEnd="110dp"
+            android:layout_marginEnd="60dp"
             android:layout_weight="1"
             android:accessibilityLiveRegion="polite"
             android:fontFamily="@font/b612_mono"
             android:gravity="center"
-            android:text="@string/t_enter_new_pin"
+            android:text="@string/t_enter_password"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textAppearance="@android:style/TextAppearance.Material.Display1"
@@ -39,9 +39,10 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="200px"
-            android:layout_marginTop="30px"
-            android:layout_marginRight="200px"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="60dp"
+            android:layout_marginRight="60dp"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -59,7 +60,7 @@
                 android:id="@+id/passwordEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="15dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/b612_mono"
                 android:text="0"
@@ -80,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="50dp"
             android:layout_marginRight="15dp"
             android:orientation="horizontal">
 
@@ -127,7 +128,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="50dp"
             android:layout_marginRight="15dp"
             android:orientation="horizontal">
 
@@ -176,7 +177,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="50dp"
             android:layout_marginRight="15dp"
             android:orientation="horizontal">
 
@@ -224,7 +225,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="50dp"
             android:layout_marginRight="15dp"
             android:orientation="horizontal">
 

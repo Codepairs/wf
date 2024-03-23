@@ -1,43 +1,52 @@
 package com.example.app
 
+import android.os.Bundle
+import android.view.View
 import android.content.Context
+import androidx.activity.ComponentActivity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.os.Bundle
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import java.io.IOException
+import java.nio.charset.Charset
 
-class ChangingPinActivity : ComponentActivity() {
+class PINCodeActivity : ComponentActivity() {
+
+    /**
+     * Пароль приложения из настроек
+     */
+    private var appPassword: Array<Int> = arrayOf(1, 2, 3, 4, 5)
 
     /**
      * Файл с настройками приложения
      */
     private lateinit var settings: SharedPreferences
 
-    private var index: Int = 0
-    private var password = arrayOf(0, 0, 0, 0, 0)
+    /**
+     * Массив для набираемого пароля
+     */
+    private var password: Array<Int> = arrayOf(0, 0, 0, 0, 0)
 
     /**
-     * Виджет для отображения изменений пароля приложения
+     * Индекс в массиве для вводимого символа
+     */
+    private var index: Int = 0
+
+    /**
+     * id виджета для изменения отображения количества введеных цифр пароля
      */
     private val passwordEdit = R.id.passwordEdit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_changing_pin)
+        setContentView(R.layout.activity_pin_code_entering)
         settings = getSharedPreferences(getString(R.string.name_sp_settings), Context.MODE_PRIVATE)
         setColorTheme(getColorTheme())
-    }
+        appPassword = unmaskPassword(getAppPassword())
 
-    /**
-     * Получаем флаг входа в приложение
-     */
-    private fun getWasRegisteredFlag() : Boolean {
-        return settings.getBoolean("WasRegistered", false)
     }
 
     /**
@@ -64,66 +73,91 @@ class ChangingPinActivity : ComponentActivity() {
     }
 
     /**
-     * Меняем флаг входа в приложение
+     * Получаем пароль из SharedPreferences
+     * @return String? strPassword
      */
-    private fun changeWasRegisteredFlag() {
-        val settings: SharedPreferences = getSharedPreferences(getString(R.string.name_sp_settings), Context.MODE_PRIVATE)
-        val editor = settings.edit()
-        editor.putBoolean("WasRegistered", true)
-        editor.commit()
+    private fun getAppPassword(): String? {
+        val strPassword: String?
+        if(settings.contains("Password")){
+            strPassword = settings.getString("Password", null)
+        }
+        else{
+            strPassword = "00000"
+            val editor = settings.edit()
+            editor.putString("Password", strPassword)
+            editor.commit()
+        }
+        Toast.makeText(applicationContext, "Password, $strPassword", Toast.LENGTH_LONG).show()
+        return strPassword
+    }
+
+    private fun getJSONFromAssets(): String? {
+
+        var json: String? = null
+        val charset: Charset = Charsets.UTF_8
+        try {
+            val myUsersJSONFile = assets.open("com/example/app/jsonClasses/resources/Settings.json")
+            val size = myUsersJSONFile.available()
+            val buffer = ByteArray(size)
+            myUsersJSONFile.read(buffer)
+            myUsersJSONFile.close()
+            json = String(buffer, charset)
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            return null
+        }
+        return json
     }
 
     /**
-     * Переходим в меню настроек
+     * Получаем численное значение пароля из строки
+     * @param strPassword
+     * @return Array<Int>
      */
-    private fun changeActivitySettings() {
-        val intent = Intent(this@ChangingPinActivity, SettingsActivity::class.java)
+    private fun unmaskPassword(strPassword: String?): Array<Int> {
+        return arrayOf(
+            strPassword!![0].toString().toInt(),
+            strPassword[1].toString().toInt(),
+            strPassword[2].toString().toInt(),
+            strPassword[3].toString().toInt(),
+            strPassword[4].toString().toInt()
+            )
+    }
+
+    /**
+     * Очищаем пароль, устанавливаем индекс в 0 и выводим это на экран
+     */
+    private fun clearPassword(){
+        index = 0
+        for (i in 0..4){
+            password[i] = 0
+        }
+        val changingView = findViewById<TextView>(passwordEdit)
+        val amount = 0
+        changingView.text = amount.toString()
+    }
+
+
+    /**
+     * Метод для переключения между страницами
+     */
+    private fun changeActivity() {
+        clearPassword()
+        val intent = Intent(this@PINCodeActivity, MainAppPageActivity::class.java)
         startActivity(intent)
         finish()
     }
 
     /**
-     * Переходим на главную страницу приложения
+     * Метод для проверки корректности пароля
      */
-    private fun changeActivityMain() {
-        val intent = Intent(this@ChangingPinActivity, MainAppPageActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    /**
-     * Сохраняем пароль в файл с настройками
-     */
-    private fun savePasswordToSettings() {
-        val editor = settings.edit()
-        Toast.makeText(applicationContext, "New password: ${passwordToString()}", Toast.LENGTH_LONG).show()
-        editor.putString("Password", passwordToString())
-        editor.commit()
-    }
-
-    /**
-     * Преобразуем пароль в строку
-     */
-    private fun passwordToString(): String{
-        var string = ""
-        string += password[0].toString()
-        string += password[1].toString()
-        string += password[2].toString()
-        string += password[3].toString()
-        string += password[4].toString()
-        return string
-    }
-
-    /**
-     * Функция смены пароля и выхода со страницы
-     */
-    private fun saveNewPassword(){
-        savePasswordToSettings()
-        if(getWasRegisteredFlag()) {
-            changeActivitySettings()
-        } else {
-            changeWasRegisteredFlag()
-            changeActivityMain()
+    private fun comparePasswords(view: View){
+        if(password contentEquals appPassword){
+            changeActivity()
+        }
+        else {
+            clearPassword()
+            Toast.makeText(applicationContext, R.string.msg_incorrect_password, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -140,7 +174,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -157,7 +191,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -174,7 +208,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -191,7 +225,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -208,7 +242,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -225,7 +259,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -242,7 +276,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -259,7 +293,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -276,7 +310,7 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
 
@@ -293,10 +327,9 @@ class ChangingPinActivity : ComponentActivity() {
         changingView.text = amount.toString()
         ++index
         if(index == 5){
-            saveNewPassword()
+            comparePasswords(view)
         }
     }
-
 
     /**
      * Метод для обработки нажатия кнопки backspace
@@ -304,12 +337,12 @@ class ChangingPinActivity : ComponentActivity() {
     fun onBackSpaceClicked(view: View) {
         password[index] = -1
         if(index > 0) {
-            val changingView = findViewById<TextView>(passwordEdit)
-            val passwordEntered = changingView.text.toString()
-            var amount = Integer.parseInt(passwordEntered)
-            --amount
-            changingView.text = amount.toString()
-            --index
+        val changingView = findViewById<TextView>(passwordEdit)
+        val passwordEntered = changingView.text.toString()
+        var amount = Integer.parseInt(passwordEntered)
+        --amount
+        changingView.text = amount.toString()
+        --index
         }
     }
 }

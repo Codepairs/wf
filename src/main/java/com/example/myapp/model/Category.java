@@ -1,51 +1,54 @@
 package com.example.myapp.model;
 
+import com.example.myapp.converter.DateConverter;
+import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.full.IncomeFullDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
+
 import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.lang.reflect.Executable;
-import java.util.ArrayList;
+
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+
 @Entity
 @Table(name = "categories")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Category {
     @Id
     @Column(name = "id")
-    @JsonView(View.REST.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(name = "category_name")
-    @JsonView(View.REST.class)
-    private String category_name;
+    private String name;
+
+    @Column(name = "last_update")
+    @UpdateTimestamp
+    @Convert(converter = DateConverter.class)
+    private LocalDateTime lastUpdateTime;
+
+    @Column(name = "creation_time", updatable = false)
+    @CreationTimestamp
+    @Convert(converter = DateConverter.class)
+    private LocalDateTime creationTime;
 
     @OneToMany(mappedBy = "category",
               fetch = FetchType.LAZY,
               cascade = CascadeType.ALL)
-    List<Income> incomes = new ArrayList<>();
+    List<IncomeFullDto> incomes;
 
     @OneToMany(mappedBy = "category",
               fetch = FetchType.LAZY,
               cascade = CascadeType.ALL)
-    List<Expense> expenses = new ArrayList<>();
-
-
-    public Long getId(){
-        return this.id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return category_name;
-    }
-
-    public void setName(String category_name) {
-        this.category_name = category_name;
-    }
-
+    List<ExpenseFullDto> expenses;
 }

@@ -1,86 +1,90 @@
 package com.example.myapp.controller;
 
+import com.example.myapp.dto.full.CategoryFullDto;
+import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.full.IncomeFullDto;
+import com.example.myapp.dto.update.CategoryUpdateDto;
+import com.example.myapp.exceptions.EmptyCategoriesException;
+import com.example.myapp.exceptions.NotFoundByIdException;
+import com.example.myapp.exceptions.SQLUniqueException;
 import com.example.myapp.model.*;
 import com.example.myapp.service.CategoryService;
+import com.example.myapp.service.ExpenseService;
+import com.example.myapp.service.IncomeService;
 import com.example.myapp.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@Validated
+@CrossOrigin
+@RequestMapping("/categories")
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    @Autowired
+    private CategoryService categoryService;
 
     @Autowired
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+    private IncomeService incomeService;
 
-    @PostMapping(value = "/categories")
-    public ResponseEntity<?> create(@RequestBody Category category) {
-        categoryService.create(category);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
+    @Autowired
+    private ExpenseService expenseService;
 
 
-    @GetMapping(value = "/categories")
-    public ResponseEntity<List<Category>> read() {
-        final List<Category> categories = categoryService.readAll();
-
-        return categories != null &&  !categories.isEmpty()
-                ? new ResponseEntity<>(categories, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/categories/{id}/incomes")
-    public ResponseEntity<List<Income>> read_incomes(@PathVariable(name = "id") Long id) {
-        List<Income> incomes = categoryService.getIncomes(id);
-        return incomes != null &&  !incomes.isEmpty()
-                ? new ResponseEntity<>(incomes, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/categories/{id}/expenses")
-    public ResponseEntity<List<Expense>> read_expenses(@PathVariable(name = "id") Long id) {
-        List<Expense> expenses = categoryService.getExpenses(id);
-        return expenses != null &&  !expenses.isEmpty()
-                ? new ResponseEntity<>(expenses, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PostMapping()
+    public ResponseEntity<CategoryFullDto> create(@Valid @RequestBody CategoryUpdateDto category) throws SQLUniqueException {
+        CategoryFullDto dtoCategory = categoryService.create(category);
+        return new ResponseEntity<>(dtoCategory, HttpStatus.CREATED);
     }
 
 
-    @GetMapping(value = "/categories/{id}")
-    public ResponseEntity<Category> read(@PathVariable(name = "id") Long id) {
-        final Category category = categoryService.read(id);
-
-        return category != null
-                ? new ResponseEntity<>(category, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping()
+    public ResponseEntity<List<CategoryFullDto>> read() throws EmptyCategoriesException {
+        final List<CategoryFullDto> categories = categoryService.readAll();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
 
-    @PutMapping(value = "/categories/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Category category) {
-        final boolean updated = categoryService.update(category, id);
+    @GetMapping(value = "/incomesById")
+    public ResponseEntity<List<IncomeFullDto>> getIncomesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        List<IncomeFullDto> incomes = categoryService.getIncomes(id);
+        return new ResponseEntity<>(incomes, HttpStatus.OK);
 
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    @DeleteMapping(value = "/categories/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
-        final boolean deleted = categoryService.delete(id);
+    @GetMapping(value = "/expensesById")
+    public ResponseEntity<List<ExpenseFullDto>> getExpensesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        List<ExpenseFullDto> expenses = categoryService.getExpenses(id);
+        return new ResponseEntity<>(expenses, HttpStatus.OK);
+    }
 
-        return deleted
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+
+    @GetMapping(value = "categoryById")
+    public ResponseEntity<CategoryFullDto> read(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        final CategoryFullDto category = categoryService.read(id);
+        return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
+
+    @PutMapping(value = "/categoryById")
+    public ResponseEntity<CategoryFullDto> update(@RequestParam(value = "id") @Valid @PathVariable UUID id, @Valid @RequestBody CategoryUpdateDto category) throws SQLUniqueException, NotFoundByIdException {
+        final CategoryFullDto dtoCategory = categoryService.update(category, id);
+        return new ResponseEntity<>(dtoCategory, HttpStatus.OK);
+    }
+
+    @Transactional
+    @DeleteMapping(value = "/categoryById")
+    public ResponseEntity<Void> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        categoryService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

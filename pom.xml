@@ -10,8 +10,12 @@
     <groupId>com.example</groupId>
     <artifactId>myapp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>myapp</name>
     <description>Demo project for Spring Boot</description>
+    <modules>
+        <module>backend</module>
+    </modules>
     <properties>
         <java.version>21</java.version>
     </properties>

@@ -2,12 +2,9 @@ package com.example.myapp.service;
 
 import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.update.ExpenseUpdateDto;
-import com.example.myapp.exceptions.EmptyExpenseException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
-import com.example.myapp.model.Expense;
-import com.example.myapp.model.Income;
-import com.example.myapp.model.User;
+import com.example.myapp.handler.exceptions.EmptyExpenseException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 
 import java.util.List;
 import java.util.UUID;

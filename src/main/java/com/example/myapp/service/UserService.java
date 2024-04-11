@@ -4,12 +4,9 @@ import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
 import com.example.myapp.dto.full.UserFullDto;
 import com.example.myapp.dto.update.UserUpdateDto;
-import com.example.myapp.exceptions.EmptyUsersException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
-import com.example.myapp.model.Expense;
-import com.example.myapp.model.Income;
-import com.example.myapp.model.User;
+import com.example.myapp.handler.exceptions.EmptyUsersException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 
 import java.util.List;
 import java.util.UUID;

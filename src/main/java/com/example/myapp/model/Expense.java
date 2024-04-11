@@ -23,7 +23,7 @@ import java.util.UUID;
 public class Expense {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "comment")
@@ -34,11 +34,11 @@ public class Expense {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserFullDto user;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryFullDto category;
+    private Category category;
 
     @Column(name = "last_update")
     @UpdateTimestamp

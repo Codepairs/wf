@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,18 +27,18 @@ import java.util.UUID;
 public class Category {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "category_name")
     private String name;
 
-    @Column(name = "last_update")
+    @Column(name = "category_last_update")
     @UpdateTimestamp
     @Convert(converter = DateConverter.class)
     private LocalDateTime lastUpdateTime;
 
-    @Column(name = "creation_time", updatable = false)
+    @Column(name = "category_creation_time", updatable = false)
     @CreationTimestamp
     @Convert(converter = DateConverter.class)
     private LocalDateTime creationTime;
@@ -45,10 +46,10 @@ public class Category {
     @OneToMany(mappedBy = "category",
               fetch = FetchType.LAZY,
               cascade = CascadeType.ALL)
-    List<IncomeFullDto> incomes;
+    List<Income> incomes;
 
     @OneToMany(mappedBy = "category",
               fetch = FetchType.LAZY,
               cascade = CascadeType.ALL)
-    List<ExpenseFullDto> expenses;
+    List<Expense> expenses;
 }

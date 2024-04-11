@@ -4,15 +4,12 @@ import com.example.myapp.dto.full.CategoryFullDto;
 import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
 import com.example.myapp.dto.update.CategoryUpdateDto;
-import com.example.myapp.exceptions.EmptyCategoriesException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
-import com.example.myapp.model.*;
+import com.example.myapp.handler.exceptions.EmptyCategoriesException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.service.CategoryService;
 import com.example.myapp.service.ExpenseService;
 import com.example.myapp.service.IncomeService;
-import com.example.myapp.service.UserService;
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +30,6 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @Autowired
-    private IncomeService incomeService;
-
-    @Autowired
-    private ExpenseService expenseService;
 
 
     @PostMapping()

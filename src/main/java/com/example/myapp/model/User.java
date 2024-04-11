@@ -27,7 +27,7 @@ import java.util.UUID;
 public class User {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "user_name")
@@ -42,12 +42,12 @@ public class User {
     @OneToMany(mappedBy = "user",
               fetch = FetchType.LAZY,
               cascade = CascadeType.ALL)
-    List<IncomeFullDto> incomes;
+    List<Income> incomes;
 
     @OneToMany(mappedBy = "user",
               fetch = FetchType.LAZY,
               cascade = CascadeType.ALL)
-    List<ExpenseFullDto> expenses;
+    List<Expense> expenses;
 
     @Column(name = "last_update")
     @UpdateTimestamp

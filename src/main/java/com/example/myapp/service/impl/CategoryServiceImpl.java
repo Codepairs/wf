@@ -3,10 +3,12 @@ import com.example.myapp.dto.full.CategoryFullDto;
 import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
 import com.example.myapp.dto.update.CategoryUpdateDto;
-import com.example.myapp.exceptions.EmptyCategoriesException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
+import com.example.myapp.handler.exceptions.EmptyCategoriesException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.model.Category;
+import com.example.myapp.model.Expense;
+import com.example.myapp.model.Income;
 import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.repository.IncomeRepository;
@@ -77,10 +79,12 @@ public class CategoryServiceImpl implements CategoryService {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
         Category category = categoryRepository.getReferenceById(id);
+        List<Expense> expenses = updateCategory.getExpenses().stream().map(expenseMappingUtils::expenseFullToExpense).toList();
+        List<Income> incomes = updateCategory.getIncomes().stream().map(incomeMappingUtils::incomeFullToIncome).toList();
         try {
             category.setName(updateCategory.getName());
-            category.setExpenses(updateCategory.getExpenses());
-            category.setIncomes(updateCategory.getIncomes());
+            category.setExpenses(expenses);
+            category.setIncomes(incomes);
             categoryRepository.save(category);
             return categoryMappingUtils.categoryToCategoryFull(category);
         }

@@ -1,88 +1,80 @@
 package com.example.myapp.controller;
 
-import com.example.myapp.model.Expense;
-import com.example.myapp.model.Income;
-import com.example.myapp.model.User;
+import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.full.IncomeFullDto;
+import com.example.myapp.dto.full.UserFullDto;
+import com.example.myapp.dto.update.UserUpdateDto;
+import com.example.myapp.handler.exceptions.EmptyUsersException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.service.UserService;
-import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@Validated
+@CrossOrigin
+@RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @PostMapping(value = "/users")
-    public ResponseEntity<?> create(@RequestBody User user) {
-        userService.create(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
+    private UserService userService;
 
 
-    @GetMapping(value = "/users")
-    public ResponseEntity<List<User>> read() {
-        final List<User> users = userService.readAll();
-
-        return users != null &&  !users.isEmpty()
-                ? new ResponseEntity<>(users, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/users/{id}/incomes")
-    public ResponseEntity<List<Income>> read_incomes(@PathVariable(name = "id") Long id) {
-        List<Income> incomes = userService.getIncomes(id);
-        return incomes != null &&  !incomes.isEmpty()
-                ? new ResponseEntity<>(incomes, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/users/{id}/expenses")
-    public ResponseEntity<List<Expense>> read_expenses(@PathVariable(name = "id") Long id) {
-        List<Expense> expenses = userService.getExpenses(id);
-        return expenses != null &&  !expenses.isEmpty()
-                ? new ResponseEntity<>(expenses, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PostMapping()
+    public ResponseEntity<?> create(@Valid @RequestBody UserUpdateDto user) throws SQLUniqueException {
+        UserFullDto userFullDto = userService.create(user);
+        return new ResponseEntity<>(userFullDto, HttpStatus.CREATED);
     }
 
 
-    @GetMapping(value = "/users/{id}")
-    public ResponseEntity<User> read(@PathVariable(name = "id") Long id) {
-        final User user = userService.read(id);
+    @GetMapping()
+    public ResponseEntity<List<UserFullDto>> read() throws EmptyUsersException {
+        final List<UserFullDto> users = userService.readAll();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 
-        return user != null
-                ? new ResponseEntity<>(user, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping(value = "incomesById")
+    public ResponseEntity<List<IncomeFullDto>> readIncomesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        List<IncomeFullDto> incomes = userService.getIncomes(id);
+        return new ResponseEntity<>(incomes, HttpStatus.OK);
     }
 
 
-    @PutMapping(value = "/users/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody User user) {
-        final boolean updated = userService.update(user, id);
-
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    @GetMapping(value = "expensesById")
+    public ResponseEntity<List<ExpenseFullDto>> readExpensesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        List<ExpenseFullDto> expenses= userService.getExpenses(id);
+        return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/users/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
-        final boolean deleted = userService.delete(id);
 
-        return deleted
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    @GetMapping(value = "usersById")
+    public ResponseEntity<UserFullDto> readById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        UserFullDto user = userService.read(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+
+
+    @PutMapping(value = "/usersById")
+    public ResponseEntity<UserFullDto> update(@RequestParam(value = "id") @Valid @PathVariable UUID id, @Valid @RequestBody UserUpdateDto user) throws NotFoundByIdException, SQLUniqueException {
+        final UserFullDto userFullDto = userService.update(user, id);
+        return new ResponseEntity<>(userFullDto, HttpStatus.OK);
+    }
+
+    @Transactional
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        userService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

@@ -1,7 +1,7 @@
-package com.example.myapp.exceptions;
+package com.example.myapp.handler.exceptions;
 
 public class EmptyUsersException extends Throwable{
     public EmptyUsersException(String message) {
-        super(message);
+        super("There are no users in database");
     }
 }

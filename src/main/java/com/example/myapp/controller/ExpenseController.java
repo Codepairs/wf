@@ -1,66 +1,63 @@
 package com.example.myapp.controller;
 
-import com.example.myapp.model.Expense;
+import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.update.ExpenseUpdateDto;
+import com.example.myapp.handler.exceptions.EmptyExpenseException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.service.ExpenseService;
-import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@Validated
+@CrossOrigin
+@RequestMapping(value = "/expenses")
 public class ExpenseController {
 
-    private final ExpenseService expenseService;
-
     @Autowired
-    public ExpenseController(ExpenseService expenseService) {
-        this.expenseService = expenseService;
+    private ExpenseService expenseService;
+
+
+    @PostMapping()
+    public ResponseEntity<ExpenseFullDto> create(@Valid @RequestBody ExpenseUpdateDto expense) throws SQLUniqueException {
+        ExpenseFullDto expenseFullDto = expenseService.create(expense);
+        return new ResponseEntity<>(expenseFullDto, HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/expenses")
-    public ResponseEntity<?> create(@RequestBody Expense expense){
-        expenseService.create(expense);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @GetMapping
+    public ResponseEntity<List<ExpenseFullDto>> readAll() throws EmptyExpenseException {
+        List<ExpenseFullDto> expenses = expenseService.readAll();
+        return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/expenses")
-    public ResponseEntity<List<Expense>> read() {
-        final List<Expense> incomes = expenseService.readAll();
+    @GetMapping(value = "/expensesById")
+    public ResponseEntity<ExpenseFullDto> readById(@RequestParam(name = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        final ExpenseFullDto expense = expenseService.read(id);
+        return new ResponseEntity<>(expense, HttpStatus.OK);
 
-        return incomes != null &&  !incomes.isEmpty()
-                ? new ResponseEntity<>(incomes, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/expenses/{id}")
-    public ResponseEntity<Expense> read(@PathVariable(name = "id") Long id) {
-        final Expense expense = expenseService.read(id);
-
-        return expense != null
-                ? new ResponseEntity<>(expense, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 
-    @PutMapping(value = "/expenses/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Expense expense) {
-        final boolean updated = expenseService.update(expense, id);
+    @PutMapping(value = "/expensesById")
+    public ResponseEntity<ExpenseFullDto> update(@RequestParam(value = "id") @Valid @PathVariable UUID id,
+                                                  @Valid @RequestBody ExpenseUpdateDto expense) throws NotFoundByIdException, SQLUniqueException {
+        final ExpenseFullDto expenseFullDto = expenseService.update(expense, id);
+        return new ResponseEntity<>(expenseFullDto, HttpStatus.OK);
 
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    @DeleteMapping(value = "/expenses/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
-        final boolean deleted = expenseService.delete(id);
-
-        return deleted
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    @Transactional
+    @DeleteMapping(value = "/expensesById")
+    public ResponseEntity<Void> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        expenseService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

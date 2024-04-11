@@ -4,13 +4,9 @@ import com.example.myapp.dto.full.CategoryFullDto;
 import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
 import com.example.myapp.dto.update.CategoryUpdateDto;
-import com.example.myapp.exceptions.EmptyCategoriesException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
-import com.example.myapp.model.Category;
-import com.example.myapp.model.Expense;
-import com.example.myapp.model.Income;
-import com.example.myapp.model.User;
+import com.example.myapp.handler.exceptions.EmptyCategoriesException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 
 import java.util.List;
 import java.util.UUID;
@@ -54,7 +50,7 @@ public interface CategoryService {
 
     /**
      * Получает все доходы из категории по ее ID
-     * @param category_id - id категории, для которой нужно получить доходы
+     * @param categoryId - id категории, для которой нужно получить доходы
      * @return - список доходов
      */
 
@@ -62,7 +58,7 @@ public interface CategoryService {
 
     /**
      * Получает все расходы из категории по ее ID
-     * @param category_id - id категории, для которой нужно получить расходы
+     * @param categoryId - id категории, для которой нужно получить расходы
      * @return - список расходов
      */
     List<ExpenseFullDto> getExpenses(UUID categoryId) throws NotFoundByIdException;

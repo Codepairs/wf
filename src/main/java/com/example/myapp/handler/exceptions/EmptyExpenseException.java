@@ -1,8 +1,8 @@
-package com.example.myapp.exceptions;
+package com.example.myapp.handler.exceptions;
 
 public class EmptyExpenseException extends Throwable{
 
     public EmptyExpenseException(String message) {
-        super(message);
+        super("There are no expenses in database");
     }
 }

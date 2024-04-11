@@ -1,69 +1,64 @@
 package com.example.myapp.controller;
 
-import com.example.myapp.model.Income;
+import com.example.myapp.dto.full.IncomeFullDto;
+import com.example.myapp.dto.update.IncomeUpdateDto;
+import com.example.myapp.handler.exceptions.EmptyIncomesException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.service.IncomeService;
-import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@Validated
+@CrossOrigin
+@RequestMapping(value = "/incomes")
 public class IncomeController {
 
-    private final IncomeService incomeService;
-
     @Autowired
-    public IncomeController(IncomeService incomeService) {
-        this.incomeService = incomeService;
+    private IncomeService incomeService;
+
+
+    @PostMapping()
+    public ResponseEntity<IncomeFullDto> create(@Valid @RequestBody IncomeUpdateDto income) throws SQLUniqueException {
+        IncomeFullDto incomeFullDto = incomeService.create(income);
+        return new ResponseEntity<>(incomeFullDto, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<IncomeFullDto>> readAll() throws EmptyIncomesException {
+        List<IncomeFullDto> incomes = incomeService.readAll();
+        return new ResponseEntity<>(incomes, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/incomesById")
+    public ResponseEntity<IncomeFullDto> readById(@RequestParam(name = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        final IncomeFullDto expense = incomeService.read(id);
+        return new ResponseEntity<>(expense, HttpStatus.OK);
+
     }
 
 
-    @PostMapping(value = "/incomes")
-    public ResponseEntity<?> create(@RequestBody Income income){
-        incomeService.create(income);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PutMapping(value = "/incomesById")
+    public ResponseEntity<IncomeFullDto> update(@RequestParam(value = "id") @Valid @PathVariable UUID id,
+                                                 @Valid @RequestBody IncomeUpdateDto income) throws NotFoundByIdException, SQLUniqueException {
+        final IncomeFullDto incomeFullDto = incomeService.update(income, id);
+        return new ResponseEntity<>(incomeFullDto, HttpStatus.OK);
+
     }
 
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/incomes")
-    public ResponseEntity<List<Income>> read() {
-        final List<Income> incomes = incomeService.readAll();
-
-        return incomes != null &&  !incomes.isEmpty()
-                ? new ResponseEntity<>(incomes, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
-    @JsonView(View.REST.class)
-    @GetMapping(value = "/incomes/{id}")
-    public ResponseEntity<Income> read(@PathVariable(name = "id") Long id) {
-        final Income income = incomeService.read(id);
-
-        return income != null
-                ? new ResponseEntity<>(income, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
-    @PutMapping(value = "/incomes/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Income income) {
-        final boolean updated = incomeService.update(income, id);
-
-        return updated
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
-
-    @DeleteMapping(value = "/incomes/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
-        final boolean deleted = incomeService.delete(id);
-
-        return deleted
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    @Transactional
+    @DeleteMapping(value = "/incomesById")
+    public ResponseEntity<Void> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        incomeService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -5,9 +5,9 @@ import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
 import com.example.myapp.dto.full.UserFullDto;
 import com.example.myapp.dto.update.UserUpdateDto;
-import com.example.myapp.exceptions.EmptyUsersException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
+import com.example.myapp.handler.exceptions.EmptyUsersException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
@@ -79,9 +79,11 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundByIdException("User with id " + id + " not found");
         }
         User user1 = userRepository.getReferenceById(id);
+        List<Expense> expense = user.getExpenses().stream().map(expenseMappingUtils::expenseFullToExpense).toList();
+        List<Income> income = user.getIncomes().stream().map(incomeMappingUtils::incomeFullToIncome).toList();
         try{
-            user1.setExpenses(user.getExpenses());
-            user1.setIncomes(user.getIncomes());
+            user1.setExpenses(expense);
+            user1.setIncomes(income);
             user1.setName(user.getName());
             user1.setEmail(user.getEmail());
             user1.setPassword(user.getPassword());

@@ -1,4 +1,4 @@
-package com.example.myapp.exceptions;
+package com.example.myapp.handler.exceptions;
 
 public class NotFoundByIdException extends Throwable{
 

@@ -1,68 +1,57 @@
 package com.example.myapp.model;
 
+import com.example.myapp.converter.DateConverter;
+import com.example.myapp.dto.full.CategoryFullDto;
+import com.example.myapp.dto.full.UserFullDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Entity
 @Table(name = "incomes")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Income {
     @Id
     @Column(name = "id")
-    @JsonView(View.REST.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
-    @JsonView(View.REST.class)
     @Column(name = "comment")
     private String comment;
 
-    @JsonView(View.REST.class)
     @Column(name = "value")
     private Float value;
 
-    @JsonView(View.REST.class)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserFullDto user;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonView(View.REST.class)
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private CategoryFullDto category;
 
+    @Column(name = "last_update")
+    @UpdateTimestamp
+    @Convert(converter = DateConverter.class)
+    private LocalDateTime lastUpdateTime;
 
-    public Float getValue(){
-        return this.value;
-    }
+    @Column(name = "creation_time", updatable = false)
+    @CreationTimestamp
+    @Convert(converter = DateConverter.class)
+    private LocalDateTime creationTime;
 
-    public void setValue(Float value) {
-        this.value = value;
-    }
-
-
-    public Long getId(){
-        return this.id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public void setUserId(User user){
-        this.user = user;
-    }
-
-    public User getUser(){
-        return this.user;
-    }
 }

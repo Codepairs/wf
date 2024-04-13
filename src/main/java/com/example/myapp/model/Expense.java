@@ -1,66 +1,52 @@
 package com.example.myapp.model;
 
+import com.example.myapp.converter.DateConverter;
+import com.example.myapp.dto.full.CategoryFullDto;
+import com.example.myapp.dto.full.UserFullDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Entity
 @Table(name = "expenses")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Expense {
     @Id
     @Column(name = "id")
-    @JsonView(View.REST.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(name = "comment")
-    @JsonView(View.REST.class)
     private String comment;
 
     @Column(name = "value")
-    @JsonView(View.REST.class)
     private Float value;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonView(View.REST.class)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
+    private UserFullDto user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonView(View.REST.class)
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private CategoryFullDto category;
 
-    public Float getValue(){
-        return this.value;
-    }
+    @Column(name = "last_update")
+    @UpdateTimestamp
+    @Convert(converter = DateConverter.class)
+    private LocalDateTime lastUpdateTime;
 
-    public void setValue(Float value) {
-        this.value = value;
-    }
-
-    public Long getId(){
-        return this.id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public void setUserId(User user){
-        this.user = user;
-    }
-
-    public User getUser(){
-        return this.user;
-    }
+    @Column(name = "creation_time", updatable = false)
+    @CreationTimestamp
+    @Convert(converter = DateConverter.class)
+    private LocalDateTime creationTime;
 }

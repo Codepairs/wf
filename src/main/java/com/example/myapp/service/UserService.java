@@ -1,30 +1,38 @@
 package com.example.myapp.service;
 
+import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.full.IncomeFullDto;
+import com.example.myapp.dto.full.UserFullDto;
+import com.example.myapp.dto.update.UserUpdateDto;
+import com.example.myapp.exceptions.EmptyUsersException;
+import com.example.myapp.exceptions.NotFoundByIdException;
+import com.example.myapp.exceptions.SQLUniqueException;
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
     /**
      * Создает нового клиента
      * @param user - клиент для создания
      */
-    void create(User user);
+    UserFullDto create(UserUpdateDto user) throws SQLUniqueException;
 
     /**
      * Возвращает список всех имеющихся клиентов
      * @return список клиентов
      */
-    List<User> readAll();
+    List<UserFullDto> readAll() throws EmptyUsersException;
 
     /**
      * Возвращает клиента по его ID
      * @param id - ID клиента
      * @return - объект клиента с заданным ID
      */
-    User read(Long id);
+    UserFullDto read(UUID id) throws NotFoundByIdException;
 
     /**
      * Обновляет клиента с заданным ID,
@@ -33,14 +41,14 @@ public interface UserService {
      * @param id - id клиента которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
-    boolean update(User user, Long id);
+    UserFullDto update(UserUpdateDto user, UUID id) throws SQLUniqueException, NotFoundByIdException;
 
     /**
      * Удаляет клиента с заданным ID
      * @param id - id клиента, которого нужно удалить
      * @return - true если клиент был удален, иначе false
      */
-    boolean delete(Long id);
+    void delete(UUID id) throws NotFoundByIdException;
 
 
     /**
@@ -49,12 +57,12 @@ public interface UserService {
      * @return - список доходов
      */
 
-    List<Income> getIncomes(Long user_id);
+    List<IncomeFullDto> getIncomes(UUID user_id) throws NotFoundByIdException;
 
     /**
      * Получает все расходы пользователя по его ID
      * @param user_id - id пользователя, для которого нужно получить расходы
      * @return - список расходов
      */
-    List<Expense> getExpenses(Long user_id);
+    List<ExpenseFullDto> getExpenses(UUID user_id) throws NotFoundByIdException;
 }

@@ -1,7 +1,6 @@
 package com.example.myapp.controller;
 
 import com.example.myapp.model.Expense;
-import com.example.myapp.model.View;
 import com.example.myapp.service.ExpenseService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;

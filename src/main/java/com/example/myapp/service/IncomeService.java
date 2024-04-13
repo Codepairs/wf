@@ -1,30 +1,39 @@
 package com.example.myapp.service;
 
+<<<<<<< HEAD
 import com.example.myapp.model.Expense;
+=======
+import com.example.myapp.dto.full.IncomeFullDto;
+import com.example.myapp.dto.update.IncomeUpdateDto;
+import com.example.myapp.exceptions.EmptyIncomesException;
+import com.example.myapp.exceptions.NotFoundByIdException;
+import com.example.myapp.exceptions.SQLUniqueException;
+>>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IncomeService {
     /**
      * Создает новый доход
      * @param income - доход для создания
      */
-    void create(Income income);
+    IncomeFullDto create(IncomeUpdateDto income) throws SQLUniqueException;
 
     /**
      * Возвращает список всех имеющихся доходов
      * @return список доходов
      */
-    List<Income> readAll();
+    List<IncomeFullDto> readAll() throws EmptyIncomesException;
 
     /**
      * Возвращает доход по его ID
      * @param id - ID дохода
      * @return - объект дохода с заданным ID
      */
-    Income read(Long id);
+    IncomeFullDto read(UUID id) throws NotFoundByIdException;
 
 
     /**
@@ -42,12 +51,11 @@ public interface IncomeService {
      * @param id - id дохода которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
-    boolean update(Income income, Long id);
+    IncomeFullDto update(IncomeUpdateDto income, UUID id) throws NotFoundByIdException, SQLUniqueException;
 
     /**
      * Удаляет доход с заданным ID
      * @param id - id дохода, которого нужно удалить
-     * @return - true если доход был удален, иначе false
      */
-    boolean delete(Long id);
+    void delete(UUID id) throws NotFoundByIdException;
 }

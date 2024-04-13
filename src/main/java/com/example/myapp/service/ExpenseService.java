@@ -1,31 +1,37 @@
 package com.example.myapp.service;
 
+import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.update.ExpenseUpdateDto;
+import com.example.myapp.exceptions.EmptyExpenseException;
+import com.example.myapp.exceptions.NotFoundByIdException;
+import com.example.myapp.exceptions.SQLUniqueException;
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ExpenseService {
     /**
      * Создает новый расход
      * @param expense - расход для создания
      */
-    void create(Expense expense);
+    ExpenseFullDto create(ExpenseUpdateDto expense) throws SQLUniqueException;
 
 
     /**
      * Возвращает список всех имеющихся расходов
      * @return список расходов
      */
-    List<Expense> readAll();
+    List<ExpenseFullDto> readAll() throws EmptyExpenseException;
 
     /**
      * Возвращает расход по его ID
      * @param id - ID расхода
      * @return - объект расхода с заданным ID
      */
-    Expense read(Long id);
+    ExpenseFullDto read(UUID id) throws NotFoundByIdException;
 
 
     /**
@@ -42,12 +48,12 @@ public interface ExpenseService {
      * @param id - id расхода которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
-    boolean update(Expense expense, Long id);
+    ExpenseFullDto update(ExpenseUpdateDto expense, UUID id) throws NotFoundByIdException, SQLUniqueException;
 
     /**
      * Удаляет расход с заданным ID
      * @param id - id расхода, которого нужно удалить
      * @return - true если расход был удален, иначе false
      */
-    boolean delete(Long id);
+    void delete(UUID id) throws NotFoundByIdException;
 }

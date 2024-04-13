@@ -39,4 +39,4 @@ build/
 
 ### Other ###
 .idea/
-/src/main/resources/
+/service/src/main/resources/

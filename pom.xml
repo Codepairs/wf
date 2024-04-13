@@ -10,8 +10,13 @@
     <groupId>com.example</groupId>
     <artifactId>myapp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>myapp</name>
     <description>Demo project for Spring Boot</description>
+    <modules>
+        <module>backend</module>
+        <module>service</module>
+    </modules>
     <properties>
         <java.version>21</java.version>
     </properties>
@@ -55,6 +60,7 @@
             <scope>test</scope>
         </dependency>
 
+<<<<<<< HEAD
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -68,6 +74,23 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+=======
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>3.2.4</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf-spring5 -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring5</artifactId>
+            <version>3.1.2.RELEASE</version>
+        </dependency>
+
+
+>>>>>>> website_backend
     </dependencies>
 
 

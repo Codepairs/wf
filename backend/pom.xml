@@ -12,6 +12,16 @@
     <groupId>org.example</groupId>
     <artifactId>backend</artifactId>
 
+
+    <dependencies>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>

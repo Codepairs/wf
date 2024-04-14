@@ -1,0 +1,67 @@
+html,
+body {
+    font-family: 'Montserrat';
+    background: #ffffff;
+}
+
+.LoginPage {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #ffffff !important;
+}
+
+.Header {
+    position: relative !important;
+    display: flex;
+    width: 100% !important;
+    height: 45px !important;
+    background-color: rgba(224, 224, 224, 0.5) !important;
+}
+
+.HeaderLink {
+    font-size: 1.3rem !important;
+    color: rgba(31, 92, 182, 1) !important;
+    font-weight: bold !important;
+    text-decoration: none;
+    margin-top: 0.5%;
+    margin-left: 2%;
+}
+a {
+    color: #545454 !important;
+    font-weight: bold !important;
+    padding-right: 25px !important;
+    padding-left: 25px !important;
+    font-size: 0.75rem !important;
+    text-decoration: none !important;
+
+}
+.HeaderButton {
+    background-color: rgba(31, 92, 182, 1) !important;
+}
+.Buttons {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    width: 50%;
+    margin-left: 10%;
+    margin-top: 1%;
+    margin-bottom: 0px;
+}
+.First {
+    display: flex;
+    flex-direction: row;
+}
+.Gistograms {
+    width: 800px;
+    height: 50%!important;
+}
+.FirstDought {
+    width: 215px;
+    height: 50%!important;
+}
+.SecondDought {
+    width: 215px;
+    height: 50%!important;
+}

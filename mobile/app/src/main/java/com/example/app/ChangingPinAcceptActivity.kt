@@ -11,7 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 
-class ChangingPinActivity : ComponentActivity() {
+class ChangingPinAcceptActivity : ComponentActivity() {
 
     /**
      * Файл с настройками приложения
@@ -24,11 +24,14 @@ class ChangingPinActivity : ComponentActivity() {
     /**
      * Массив виджетов для отображения количества введённых символов пароля
      */
-    private val widgetArray = arrayOf(R.id.circleOneChange, R.id.circleTwoChange, R.id.circleThreeChange, R.id.circleFourChange, R.id.circleFiveChange)
+    private val widgetArray = arrayOf(R.id.circleOneAccept, R.id.circleTwoAccept, R.id.circleThreeAccept, R.id.circleFourAccept, R.id.circleFiveAccept)
+
+    private lateinit var passwordEntered: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_changing_pin)
+        setContentView(R.layout.activity_changing_pin_accept)
+        passwordEntered = intent.getStringExtra("Password").toString()
         settings = getSharedPreferences(getString(R.string.name_sp_settings), Context.MODE_PRIVATE)
         setColorTheme(getColorTheme())
     }
@@ -64,15 +67,10 @@ class ChangingPinActivity : ComponentActivity() {
     }
 
     /**
-     * Меняем флаг входа в приложение
-     */
-
-
-    /**
      * Переходим в меню настроек
      */
     private fun changeActivitySettings() {
-        val intent = Intent(this@ChangingPinActivity, SettingsActivity::class.java)
+        val intent = Intent(this@ChangingPinAcceptActivity, SettingsActivity::class.java)
         startActivity(intent)
         finish()
     }
@@ -81,17 +79,7 @@ class ChangingPinActivity : ComponentActivity() {
      * Переходим на главную страницу приложения
      */
     private fun changeActivityMain() {
-        val intent = Intent(this@ChangingPinActivity, MainAppPageActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    /**
-     * Переходим на страницу подтверждения пароля
-     */
-    private fun changeActivityApprovePin() {
-        val intent = Intent(this@ChangingPinActivity, ChangingPinAcceptActivity::class.java)
-        intent.putExtra("Password", passwordToString())
+        val intent = Intent(this@ChangingPinAcceptActivity, MainAppPageActivity::class.java)
         startActivity(intent)
         finish()
     }
@@ -123,14 +111,13 @@ class ChangingPinActivity : ComponentActivity() {
      * Функция смены пароля и выхода со страницы
      */
     private fun saveNewPassword(){
-        /*savePasswordToSettings()
+        savePasswordToSettings()
         if(getWasRegisteredFlag()) {
             changeActivitySettings()
         } else {
             changeWasRegisteredFlag()
             changeActivityMain()
-        }*/
-        changeActivityApprovePin()
+        }
     }
 
     /**
@@ -149,7 +136,7 @@ class ChangingPinActivity : ComponentActivity() {
      */
     private fun updateCircles(index: Int, paintTrue: Boolean) {
         val circleToUpdate = findViewById<TextView>(widgetArray[index])
-        //circleToUpdate.backgroundTintMode = null
+        circleToUpdate.backgroundTintMode = null
         if(paintTrue) {
             circleToUpdate.setBackgroundResource(R.drawable.circle_on)
         } else {
@@ -158,13 +145,36 @@ class ChangingPinActivity : ComponentActivity() {
     }
 
     /**
+     * Обработка некорректного пароля
+     */
+    private fun incorrectInput() {
+        for(i in widgetArray.indices){
+            updateCircles(i, false)
+            password = arrayOf(0, 0, 0, 0, 0)
+        }
+        index = 0
+    }
+
+    /**
+     * Обработка ввода 5 символов пароля
+     */
+    private fun checkPassword() {
+        if(passwordEntered == passwordToString()){
+            saveNewPassword()
+        } else {
+            incorrectInput()
+        }
+    }
+
+    /**
      * Метод для обработки нажатия кнопки 0
      */
     fun onZeroClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 0
+        password[index] = 0
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -173,9 +183,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onOneClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 1
+        password[index] = 1
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -184,9 +195,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onTwoClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 2
+        password[index] = 2
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -195,9 +207,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onThreeClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 3
+        password[index] = 3
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -206,9 +219,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onFourClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 4
+        password[index] = 4
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -217,9 +231,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onFiveClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 5
+        password[index] = 5
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -228,9 +243,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onSixClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 6
+        password[index] = 6
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -239,9 +255,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onSevenClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 7
+        password[index] = 7
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -250,9 +267,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onEightClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 8
+        password[index] = 8
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 
@@ -261,9 +279,10 @@ class ChangingPinActivity : ComponentActivity() {
      */
     fun onNineClicked(view: View) {
         updateCircles(index, true)
-        password[index++] = 9
+        password[index] = 9
+        ++index
         if(index == 5){
-            saveNewPassword()
+            checkPassword()
         }
     }
 

@@ -5,11 +5,10 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:orientation="vertical">
+    tools:context=".ChangingPinAcceptActivity">
 
     <TextView
-        android:id="@+id/wealthFamilyTextViewEnterPin"
+        android:id="@+id/wealthFamilyTextViewChangingPinAccept"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dip"
@@ -28,7 +27,7 @@
         android:id="@+id/passwordEnteringLayoutChange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/wealthFamilyTextViewEnterPin"
+        android:layout_below="@id/wealthFamilyTextViewChangingPinAccept"
         android:layout_marginStart="20dip"
         android:layout_marginTop="60dip"
         android:layout_marginEnd="20dip"
@@ -43,12 +42,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textViewApproveEnterPin"
+                android:id="@+id/textViewApproveChangePinAccept"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dip"
                 android:fontFamily="@font/montserrat"
-                android:text="@string/t_enter_password"
+                android:text="@string/t_approve_pin"
                 android:textAlignment="center"
                 android:textColor="#E61F5CB6"
                 android:textSize="21sp"
@@ -63,7 +62,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/circleOneEnter"
+                    android:id="@+id/circleOneAccept"
                     android:layout_width="25dip"
                     android:layout_height="25dip"
                     android:layout_marginStart="10dip"
@@ -71,7 +70,7 @@
                     android:background="@drawable/circle_off" />
 
                 <TextView
-                    android:id="@+id/circleTwoEnter"
+                    android:id="@+id/circleTwoAccept"
                     android:layout_width="25dip"
                     android:layout_height="25dip"
                     android:layout_marginStart="20dip"
@@ -79,7 +78,7 @@
                     android:background="@drawable/circle_off" />
 
                 <TextView
-                    android:id="@+id/circleThreeEnter"
+                    android:id="@+id/circleThreeAccept"
                     android:layout_width="25dip"
                     android:layout_height="25dip"
                     android:layout_marginStart="20dip"
@@ -88,7 +87,7 @@
                     android:background="@drawable/circle_off" />
 
                 <TextView
-                    android:id="@+id/circleFourEnter"
+                    android:id="@+id/circleFourAccept"
                     android:layout_width="25dip"
                     android:layout_height="25dip"
                     android:layout_marginEnd="20dip"
@@ -96,7 +95,7 @@
                     android:background="@drawable/circle_off" />
 
                 <TextView
-                    android:id="@+id/circleFiveEnter"
+                    android:id="@+id/circleFiveAccept"
                     android:layout_width="25dip"
                     android:layout_height="25dip"
                     android:layout_marginEnd="10dip"
@@ -114,7 +113,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button1Enter"
+                android:id="@+id/button1Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -127,7 +126,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/button2Enter"
+                android:id="@+id/button2Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -140,7 +139,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/button3Enter"
+                android:id="@+id/button3Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -163,7 +162,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button4Enter"
+                android:id="@+id/button4Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -177,7 +176,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/button5Enter"
+                android:id="@+id/button5Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -191,7 +190,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/button6Enter"
+                android:id="@+id/button6Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -205,6 +204,7 @@
                 android:textColor="#343333"
                 android:textSize="32sp"
                 android:textStyle="bold" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -216,7 +216,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button7Enter"
+                android:id="@+id/button7Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -229,7 +229,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/button8Enter"
+                android:id="@+id/button8Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -242,7 +242,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/button9Enter"
+                android:id="@+id/button9Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -254,6 +254,7 @@
                 android:textColor="#343333"
                 android:textSize="32sp"
                 android:textStyle="bold" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -265,7 +266,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button0Enter"
+                android:id="@+id/button0Accept"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -279,7 +280,7 @@
                 android:textStyle="bold" />
 
             <ImageButton
-                android:id="@+id/buttonBackspaceEnter"
+                android:id="@+id/buttonBackspaceAccept"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -287,6 +288,8 @@
                 android:contentDescription="@string/delete"
                 android:onClick="onBackSpaceClicked"
                 android:src="@drawable/backspace" />
+
+
         </LinearLayout>
     </LinearLayout>
 

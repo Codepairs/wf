@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import java.io.IOException
@@ -36,9 +37,9 @@ class PINCodeActivity : ComponentActivity() {
     private var index: Int = 0
 
     /**
-     * id виджета для изменения отображения количества введеных цифр пароля
+     * Массив виджетов для отображения количества введённых символов пароля
      */
-    private val passwordEdit = R.id.passwordEdit
+    private val widgetArray = arrayOf(R.id.circleOneEnter, R.id.circleTwoEnter, R.id.circleThreeEnter, R.id.circleFourEnter, R.id.circleFiveEnter)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +65,7 @@ class PINCodeActivity : ComponentActivity() {
      * @param colorTheme
      */
     private fun setColorTheme(colorTheme: Boolean) {
-        val mainLayout = findViewById<LinearLayout>(R.id.main_layout)
+        val mainLayout = findViewById<RelativeLayout>(R.id.main_layout)
         if(colorTheme) {
             mainLayout.setBackgroundColor(Color.WHITE)
         } else {
@@ -125,24 +126,35 @@ class PINCodeActivity : ComponentActivity() {
     }
 
     /**
-     * Очищаем пароль, устанавливаем индекс в 0 и выводим это на экран
+     * Методя для изменения отображения количества введённых символов пароля
+     * @param index
+     * @param paintTrue
      */
-    private fun clearPassword(){
-        index = 0
-        for (i in 0..4){
-            password[i] = 0
+    private fun updateCircles(index: Int, paintTrue: Boolean) {
+        val circleToUpdate = findViewById<TextView>(widgetArray[index])
+        circleToUpdate.backgroundTintMode = null
+        if(paintTrue) {
+            circleToUpdate.setBackgroundResource(R.drawable.circle_on)
+        } else {
+            circleToUpdate.setBackgroundResource(R.drawable.circle_off)
         }
-        val changingView = findViewById<TextView>(passwordEdit)
-        val amount = 0
-        changingView.text = amount.toString()
     }
 
+    /**
+     * Обработка некорректного пароля
+     */
+    private fun incorrectInput() {
+        for(i in widgetArray.indices){
+            updateCircles(i, false)
+            password = arrayOf(0, 0, 0, 0, 0)
+        }
+        index = 0
+    }
 
     /**
      * Метод для переключения между страницами
      */
     private fun changeActivity() {
-        clearPassword()
         val intent = Intent(this@PINCodeActivity, MainAppPageActivity::class.java)
         startActivity(intent)
         finish()
@@ -156,7 +168,7 @@ class PINCodeActivity : ComponentActivity() {
             changeActivity()
         }
         else {
-            clearPassword()
+            incorrectInput()
             Toast.makeText(applicationContext, R.string.msg_incorrect_password, Toast.LENGTH_LONG).show()
         }
     }
@@ -165,14 +177,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 0
      */
     fun onZeroClicked(view: View) {
-        val value: Int = 0
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 0
         if(index == 5){
             comparePasswords(view)
         }
@@ -182,14 +188,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 1
      */
     fun onOneClicked(view: View) {
-        val value: Int = 1
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 1
         if(index == 5){
             comparePasswords(view)
         }
@@ -199,14 +199,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 2
      */
     fun onTwoClicked(view: View) {
-        val value: Int = 2
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 2
         if(index == 5){
             comparePasswords(view)
         }
@@ -216,14 +210,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 3
      */
     fun onThreeClicked(view: View) {
-        val value: Int = 3
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 3
         if(index == 5){
             comparePasswords(view)
         }
@@ -233,14 +221,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 4
      */
     fun onFourClicked(view: View) {
-        val value: Int = 4
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 4
         if(index == 5){
             comparePasswords(view)
         }
@@ -250,14 +232,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 5
      */
     fun onFiveClicked(view: View) {
-        val value: Int = 5
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 5
         if(index == 5){
             comparePasswords(view)
         }
@@ -267,14 +243,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 6
      */
     fun onSixClicked(view: View) {
-        val value: Int = 6
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 6
         if(index == 5){
             comparePasswords(view)
         }
@@ -284,14 +254,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 7
      */
     fun onSevenClicked(view: View) {
-        val value: Int = 7
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 7
         if(index == 5){
             comparePasswords(view)
         }
@@ -301,14 +265,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 8
      */
     fun onEightClicked(view: View) {
-        val value: Int = 8
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 8
         if(index == 5){
             comparePasswords(view)
         }
@@ -318,14 +276,8 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки 9
      */
     fun onNineClicked(view: View) {
-        val value: Int = 9
-        password[index] = value
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        ++amount
-        changingView.text = amount.toString()
-        ++index
+        updateCircles(index, true)
+        password[index++] = 9
         if(index == 5){
             comparePasswords(view)
         }
@@ -335,14 +287,9 @@ class PINCodeActivity : ComponentActivity() {
      * Метод для обработки нажатия кнопки backspace
      */
     fun onBackSpaceClicked(view: View) {
-        password[index] = -1
         if(index > 0) {
-        val changingView = findViewById<TextView>(passwordEdit)
-        val passwordEntered = changingView.text.toString()
-        var amount = Integer.parseInt(passwordEntered)
-        --amount
-        changingView.text = amount.toString()
-        --index
+            --index
         }
+        updateCircles(index, false)
     }
 }

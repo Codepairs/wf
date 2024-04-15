@@ -2,31 +2,41 @@ package com.example.app
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
-import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
+import com.example.app.databinding.ActivityPlanBinding
 
-class MainAppPageActivity : ComponentActivity() {
-
+class PlanActivity : ComponentActivity() {
     /**
      * Файл с натсройками приложения
      */
     private lateinit var settings: SharedPreferences
 
+    private lateinit var binding: ActivityPlanBinding
+
+    private val listOfInfoIncome: List<Pair<Int, String>> = listOf(Pair(80, "Job"), Pair(10, "Contribution"), Pair(10, "Friends"))
+
+    private val listOfInfoExpenses: List<Pair<Int, String>> = listOf(Pair(10, "Food"), Pair(10, "Car"), Pair(30, "GKH"), Pair(50, "For future"))
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_app_page)
+        setContentView(R.layout.activity_plan)
         settings = getSharedPreferences(getString(R.string.name_sp_settings), Context.MODE_PRIVATE)
         setColorTheme()
+        binding = ActivityPlanBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        //findViewById<PieChart>(R.id.pieChart)
     }
 
+
+    override fun onStart() {
+        super.onStart()
+        binding.IncomePieChartPlan.setInfoList(listOfInfoIncome)
+        binding.ExpensesPieChartPlan.setInfoList(listOfInfoExpenses)
+    }
 
     /**
      * Функция получения цветовой темы приложения из SharedPreferences
@@ -49,30 +59,5 @@ class MainAppPageActivity : ComponentActivity() {
         } else {
             mainLayout.setBackgroundColor(Color.GRAY)
         }
-    }
-
-    /**
-     * Обработка нажатия кнопки для перехода на страницу настроек
-     */
-    fun onSettingsButtonClicked(view: View) {
-        val intent = Intent(this@MainAppPageActivity, SettingsActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    /**
-     * Обработка нажатия на кнокпу для просмотра отчёта
-     */
-    fun onReportButtonClicked(view: View) {
-        val intent = Intent(this@MainAppPageActivity, ReportActivity::class.java)
-        startActivity(intent)
-    }
-
-    /**
-     * Обработка нажатия на кнокпу для просмотра отчёта
-     */
-    fun onPlanButtonClicked(view: View) {
-        val intent = Intent(this@MainAppPageActivity, PlanActivity::class.java)
-        startActivity(intent)
     }
 }

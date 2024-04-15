@@ -1,11 +1,16 @@
 package com.example.app
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.core.content.ContextCompat
 
 class LoginActivity : ComponentActivity() {
 
@@ -15,11 +20,15 @@ class LoginActivity : ComponentActivity() {
     private val passwordEditor: Int = R.id.editTextPasswordLogin
     private val emailEditor: Int    = R.id.editTextEmailAddressLogin
 
-    private val password: String = "12345a"
+    private lateinit var settings: SharedPreferences
+
+    private val password: String = "1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        settings = getSharedPreferences(getString(R.string.name_sp_settings), Context.MODE_PRIVATE)
+        updateCheckbox()
     }
 
     /**
@@ -55,11 +64,80 @@ class LoginActivity : ComponentActivity() {
     }
 
     /**
-     * Очищаем поле ввода пароля
+     * Убираем с экрана кнопку с сохранением пароля и заменяем её кнопкой со сменой пароля
      */
-    private fun clearPassword() {
-        val passwordText = findViewById<TextView>(passwordEditor)
-        passwordText.text = ""
+    private fun changeVisibility() {
+        val checkbox = findViewById<CheckBox>(R.id.rememberUserCheckBoxLogin)
+        val button   = findViewById<Button>(R.id.forgotPasswordButtonLogin)
+        checkbox.visibility = CheckBox.GONE
+        button.visibility = Button.VISIBLE
+    }
+
+
+    /**
+     * Ставим checkbox в корректное положение
+     */
+    private fun updateCheckbox() {
+        val checkBox = findViewById<CheckBox>(R.id.rememberUserCheckBoxLogin)
+        checkBox.isChecked = settings.getBoolean("RememberUser", true)
+    }
+
+    /**
+     * Изменяем задний фон у полей ввода почты и пароля
+     */
+    private fun changeBackgroundLogin() {
+        val loginInput = findViewById<TextView>(R.id.editTextEmailAddressLogin)
+        loginInput.setBackgroundResource(R.drawable.mistake_field)
+        loginInput.text = ""
+        loginInput.hint = "    Неправильная почта!"
+        loginInput.setHintTextColor(ContextCompat.getColor(this, R.color.mistake_text))
+        loginInput.backgroundTintMode = null
+        val passwordInput = findViewById<TextView>(R.id.editTextPasswordLogin)
+        passwordInput.setBackgroundResource(R.drawable.mistake_field)
+        passwordInput.text = ""
+        passwordInput.hint = "    Пароль"
+        passwordInput.backgroundTintMode = null
+    }
+
+    /**
+     * Изменяем задний фон у полей ввода почты и пароля
+     */
+    private fun changeBackgroundPassword() {
+        val passwordInput = findViewById<TextView>(R.id.editTextPasswordLogin)
+        passwordInput.setBackgroundResource(R.drawable.mistake_field)
+        passwordInput.text = ""
+        passwordInput.hint = "    Неправильный Пароль!"
+        passwordInput.setHintTextColor(ContextCompat.getColor(this, R.color.mistake_text))
+        passwordInput.backgroundTintMode = null
+    }
+
+    /**
+     * Обработка нажатия кнопки запомнить пользователя
+     */
+    fun onRememberUserClicked(view: View) {
+        val checkBox = findViewById<CheckBox>(R.id.rememberUserCheckBoxLogin)
+        val rememberFlag: Boolean = checkBox.isChecked
+        val editor = settings.edit()
+        editor.putBoolean("RememberUser", rememberFlag)
+        editor.commit()
+    }
+
+    /**
+     * Получаем из настроек флаг входа в приложение
+     */
+    private fun getWasRegisteredFlag() : Boolean {
+        val wasRegistered: Boolean = settings.getBoolean("WasRegistered", true)
+        Toast.makeText(applicationContext, "Was registered, $wasRegistered", Toast.LENGTH_LONG).show()
+        return wasRegistered
+    }
+
+    /**
+     * Переход на главную страницу
+     */
+    private fun toEnteringPin() {
+        val intent = Intent(this@LoginActivity, PINCodeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     /**
@@ -69,16 +147,31 @@ class LoginActivity : ComponentActivity() {
         val curPassword: String = getWidgetText(passwordEditor)
         val emailString: String = getWidgetText(emailEditor)
         if (curPassword.isEmpty()) {
-            Toast.makeText(applicationContext, "Пароль не может быть пустым!", Toast.LENGTH_LONG)
-                .show()
+            Toast.makeText(applicationContext, "Пароль не может быть пустым!", Toast.LENGTH_LONG).show()
+            changeBackgroundPassword()
+            changeVisibility()
         } else if (!isPasswordCorrect(curPassword)) {
             Toast.makeText(applicationContext, "Неверный пароль!", Toast.LENGTH_LONG).show()
-            clearPassword()
+            changeBackgroundPassword()
+            changeVisibility()
         } else if (!isEmailValid(emailString)) {
             Toast.makeText(applicationContext, "Некорректная почта!", Toast.LENGTH_LONG).show()
-        } else {
+            changeBackgroundLogin()
+            changeVisibility()
+        } else if(!getWasRegisteredFlag()){
             toSettingPIN()
+        } else {
+            toEnteringPin()
         }
+    }
+
+    /**
+     * Обработка нажатия на кнопку забыли пароль
+     */
+    fun onForgotPasswordClicked(view: View) {
+        val intent = Intent(this@LoginActivity, ChangingProfilePasswordAccessActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     /**

@@ -7,11 +7,8 @@ import com.example.myapp.exceptions.EmptyCategoriesException;
 import com.example.myapp.exceptions.NotFoundByIdException;
 import com.example.myapp.exceptions.SQLUniqueException;
 import com.example.myapp.model.Category;
-<<<<<<< HEAD
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
-=======
->>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
 import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.repository.IncomeRepository;
@@ -102,14 +99,14 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(id);
     }
 
-<<<<<<< HEAD
     public List<Income> getIncomesByUserId(Long id) {
         return incomeRepository.findAllByuser_id(id);
     }
 
     public List<Expense> getExpensesByUserId(Long id) {
         return expenseRepository.findAllByuser_id(id);
-=======
+    }
+
     public List<IncomeFullDto> getIncomes(UUID id) throws NotFoundByIdException {
         try {
             return incomeRepository.findAllByuser_id(id)
@@ -127,7 +124,6 @@ public class CategoryServiceImpl implements CategoryService {
         catch (Exception e) {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
->>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
     }
 
     public List<Expense> getExpensesByCategoryId(Long id) {

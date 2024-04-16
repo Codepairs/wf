@@ -57,20 +57,14 @@ public interface CategoryService {
      * @return - список доходов
      */
 
-<<<<<<< HEAD
     List<Income> getIncomesByUserId(Long category_id);
-=======
     List<IncomeFullDto> getIncomes(UUID categoryId) throws NotFoundByIdException;
->>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
 
     /**
      * Получает все расходы из категории по ее ID
      * @param category_id - id категории, для которой нужно получить расходы
      * @return - список расходов
      */
-<<<<<<< HEAD
     List<Expense> getExpensesByUserId(Long category_id);
-=======
     List<ExpenseFullDto> getExpenses(UUID categoryId) throws NotFoundByIdException;
->>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
 }

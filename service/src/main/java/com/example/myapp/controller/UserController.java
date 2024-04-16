@@ -3,6 +3,7 @@ package com.example.myapp.controller;
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
+import com.example.myapp.model.View;
 import com.example.myapp.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class UserController {
@@ -40,7 +42,7 @@ public class UserController {
 
     @JsonView(View.REST.class)
     @GetMapping(value = "/users/{id}/incomes")
-    public ResponseEntity<List<Income>> read_incomes(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<List<Income>> read_incomes(@PathVariable(name = "id") UUID id) {
         List<Income> incomes = userService.getIncomes(id);
         return incomes != null &&  !incomes.isEmpty()
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
@@ -49,7 +51,7 @@ public class UserController {
 
     @JsonView(View.REST.class)
     @GetMapping(value = "/users/{id}/expenses")
-    public ResponseEntity<List<Expense>> read_expenses(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<List<Expense>> read_expenses(@PathVariable(name = "id") UUID id) {
         List<Expense> expenses = userService.getExpenses(id);
         return expenses != null &&  !expenses.isEmpty()
                 ? new ResponseEntity<>(expenses, HttpStatus.OK)
@@ -58,7 +60,7 @@ public class UserController {
 
 
     @GetMapping(value = "/users/{id}")
-    public ResponseEntity<User> read(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<User> read(@PathVariable(name = "id") UUID id) {
         final User user = userService.read(id);
 
         return user != null
@@ -68,7 +70,7 @@ public class UserController {
 
 
     @PutMapping(value = "/users/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody User user) {
+    public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody User user) {
         final boolean updated = userService.update(user, id);
 
         return updated
@@ -77,7 +79,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/users/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> delete(@PathVariable(name = "id") UUID id) {
         final boolean deleted = userService.delete(id);
 
         return deleted

@@ -19,7 +19,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

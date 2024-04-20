@@ -1,4 +1,4 @@
-package com.example.myapp.dto.update;
+package com.example.myapp.dto.create;
 
 import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryUpdateDto {
+public class CategoryCreateDto {
 
     @NotBlank(message = "Category name cannot be blank")
     private String name;

@@ -1,4 +1,4 @@
-package com.example.myapp.dto.update;
+package com.example.myapp.dto.service;
 
 import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
@@ -19,8 +19,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryUpdateDto {
+public class CategoryDto {
 
     @NotBlank(message = "Category name cannot be blank")
     private String name;
 }
+

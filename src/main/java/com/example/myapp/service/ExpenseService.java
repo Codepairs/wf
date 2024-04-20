@@ -1,6 +1,9 @@
 package com.example.myapp.service;
 
 import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.info.ExpenseInfoDto;
+import com.example.myapp.dto.search.ExpenseSearchDto;
+import com.example.myapp.dto.service.ExpenseDto;
 import com.example.myapp.dto.update.ExpenseUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
@@ -14,20 +17,20 @@ public interface ExpenseService {
      * Создает новый расход
      * @param expense - расход для создания
      */
-    ExpenseFullDto create(ExpenseUpdateDto expense) throws SQLUniqueException;
+    UUID create(ExpenseDto expense) throws SQLUniqueException;
 
     /**
      * Возвращает список всех имеющихся расходов
      * @return список расходов
      */
-    List<ExpenseFullDto> readAll() throws EmptyExpenseException;
+    List<ExpenseInfoDto> readAll(ExpenseSearchDto expenseSearchDto) throws EmptyExpenseException;
 
     /**
      * Возвращает расхода по его ID
      * @param id - ID расхода
      * @return - объект расхода с заданным ID
      */
-    ExpenseFullDto read(UUID id) throws NotFoundByIdException;
+    ExpenseInfoDto read(UUID id) throws NotFoundByIdException;
 
     /**
      * Обновляет расход с заданным ID,
@@ -36,12 +39,12 @@ public interface ExpenseService {
      * @param id - id расхода которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
-    ExpenseFullDto update(ExpenseUpdateDto expense, UUID id) throws NotFoundByIdException, SQLUniqueException;
+    ExpenseInfoDto update(ExpenseUpdateDto expense, UUID id) throws NotFoundByIdException, SQLUniqueException;
 
     /**
      * Удаляет расход с заданным ID
      * @param id - id расхода, которого нужно удалить
      * @return - true если расход был удален, иначе false
      */
-    void delete(UUID id) throws NotFoundByIdException;
+    UUID delete(UUID id) throws NotFoundByIdException;
 }

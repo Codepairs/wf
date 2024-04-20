@@ -1,6 +1,6 @@
-package com.example.myapp.dto.full;
+package com.example.myapp.dto.service;
 
-
+import com.example.myapp.dto.info.CategoryInfoDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -12,16 +12,12 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExpenseFullDto {
-
-    private UUID id;
+@Builder
+public class ExpenseDto {
 
     @NotBlank(message = "Comment cannot be empty")
     private String comment;
@@ -29,18 +25,10 @@ public class ExpenseFullDto {
     @Min(value = 0, message = "Value cannot be negative")
     private BigDecimal value;
 
+    @Valid
+    private CategoryInfoDto category;
+
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate getDate;
-
-    @Valid
-    private UserFullDto user;
-
-    @Valid
-    private CategoryFullDto category;
-
-    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
-    private LocalDateTime lastUpdateTime;
-
-    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
-    private LocalDateTime creationTime;
 }
+

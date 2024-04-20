@@ -1,6 +1,6 @@
 package com.example.myapp.service.impl;
 
-
+/*
 import com.example.myapp.dto.full.ExpenseFullDto;
 import com.example.myapp.dto.full.IncomeFullDto;
 import com.example.myapp.dto.full.UserFullDto;
@@ -17,6 +17,7 @@ import com.example.myapp.repository.UserRepository;
 import com.example.myapp.service.UserService;
 import com.example.myapp.utils.ExpenseMappingUtils;
 import com.example.myapp.utils.IncomeMappingUtils;
+import com.example.myapp.utils.MappingUtils;
 import com.example.myapp.utils.UserMappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,16 +34,8 @@ public class UserServiceImpl implements UserService {
     private IncomeRepository incomeRepository;
     @Autowired
     private ExpenseRepository expenseRepository;
-
     @Autowired
-    private UserMappingUtils userMappingUtils;
-
-    @Autowired
-    private IncomeMappingUtils incomeMappingUtils;
-
-    @Autowired
-    private ExpenseMappingUtils expenseMappingUtils;
-
+    private MappingUtils mappingUtils;
     @Override
     public UserFullDto create(UserUpdateDto user) throws SQLUniqueException {
         try {
@@ -124,4 +117,4 @@ public class UserServiceImpl implements UserService {
     }
 }
 
-
+*/

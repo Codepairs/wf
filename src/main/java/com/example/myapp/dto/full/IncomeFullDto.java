@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,13 +27,16 @@ public class IncomeFullDto {
     private String comment;
 
     @Min(value = 0, message = "Value can't be negative")
-    private Float value;
+    private BigDecimal value;
 
     @Valid
     private UserFullDto user;
 
     @Valid
     private CategoryFullDto category;
+
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private LocalDate getDate;
 
     @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
     private LocalDateTime lastUpdateTime;

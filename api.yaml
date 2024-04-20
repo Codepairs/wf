@@ -1,0 +1,502 @@
+openapi: 3.0.3
+info:
+  title: WealthFamily
+  description: WealthFamily API for OS project
+  contact:
+    name: Zhilyaev Maxim
+    email: tssvett@mail.ru
+    url: https://github.com/tssvett
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Category
+    description: Операции со всеми категориями
+  - name: CategoryById
+    description: Операции с категориями по id
+
+
+
+
+paths:
+  /categories:
+    get:
+      tags:
+        - Category
+      summary: Получение всех категорий
+      description: Returns categories
+      operationId: getCategoriesAll
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryFullDto'
+        '400':
+          description: Categories is empty
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Категории пусты
+    post:
+      tags:
+        - Category
+      summary: Добавление новой категории на склад
+      description: Adds a new category
+      operationId: addCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryUpdateDto'
+      responses:
+        '200':
+          description: Успешная операция, возвращает созданный объект
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryFullDto'
+        '400':
+          description: Неудачная операция
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Что-то пошло не так...
+
+
+  /categories/categoryById:
+    get:
+      tags:
+        - CategoryById
+      summary: Получение категории по id
+      description: Returns a category by id
+      operationId: getCategoryById
+      parameters:
+        - name : id
+          in: query
+          description: id of category to return
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryFullDto'
+        '400':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Категория с таким айди не найдена
+    put:
+      tags:
+        - CategoryById
+      summary: Обновление категории на складе по id
+      description: Returns a  updated category by id
+      operationId: updateCategoryById
+      requestBody:
+        description: Формирование нового объекта с новыми данными для обновления
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryUpdateDto'
+      parameters:
+        - name : id
+          in: query
+          description: Id of category to return
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryFullDto'
+        '400':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Категория с таким айди не найдена
+    delete:
+      tags:
+        - CategoryById
+      summary: Удаление категории на складе по id
+      operationId: deleteCategoryById
+      parameters:
+        - name : id
+          in: query
+          description: Id of category to return
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Успешная операция, категория удалена
+        '400':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Товар с таким айди не найден
+
+  /category/incomesById:
+    get:
+      tags:
+        - incomesById
+      summary: Получение доходов по категории
+      description: Returns an incomes by category
+      operationId: getIncomesByCategory
+      parameters:
+        - name : Id
+          in: query
+          description: Id of category to return
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeFullDto'
+        '400':
+          description: Incomes not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Доходов для такой категории не найдено
+  /category/expensesById:
+    get:
+      tags:
+        - expensesById
+      summary: Получение расходов по категории
+      description: Returns an expenses by category
+      operationId: getExpensesByCategory
+      parameters:
+        - name : Id
+          in: query
+          description: Id of category to return
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseFullDto'
+        '400':
+          description: Expenses not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Расходов для такой категории не найдено
+
+
+components:
+  schemas:
+    CategoryFullDto:
+      required:
+        - id
+        - name
+        - incomes
+        - expenses
+        - lastUpdate
+        - creationTime
+      type: object
+      properties:
+        id:
+          type: string
+          example: 301acf9d-705a-4511-9ac9-2b859788ad7f
+        name:
+          type: string
+          example: Овощи
+          description: Название категории
+        lastUpdateTime:
+          type: string
+          format: date-time
+          description: Дата последнего редактирования
+          example : 26.03.2024 13:45:59
+        creationTime:
+          type: string
+          format: date
+          description: Дата создания
+          example: 25.03.2024 12:42:41
+        incomes:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeFullDto'
+        expenses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpenseFullDto'
+
+
+    CategoryUpdateDto:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: Овощи
+          description: Название ОБНОВЛЕННОЙ категории
+
+    IncomeFullDto:
+      required:
+        - id
+        - comment
+        - value
+        - user
+        - category
+        - getDate
+        - lastUpdate
+        - creationTime
+      type: object
+      properties:
+        id:
+          type: string
+          example: 301acf9d-705a-4511-9ac9-2b859788ad7f
+        comment:
+          type: string
+          example: Доход потому что зарплату получил
+          description: Комментарий дохода
+        value:
+          type: number
+          example: 35000
+        user:
+          $ref: '#/components/schemas/UserFullDto'
+        category:
+          $ref: '#/components/schemas/CategoryFullDto'
+        getDate:
+          type: string
+          format: date
+          description: Дата Получения, ставится пользователем
+          example: 25.03.2024 12:42:41
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Дата последнего редактирования (ставится бд)
+          example : 26.03.2024 13:45:59
+        creationTime:
+          type: string
+          format: date-time
+          description: Дата создания (ставится бд)
+          example : 25.03.2024 12:42:41
+
+    IncomeUpdateDto:
+      required:
+        - comment
+        - value
+        - category
+        - getDate
+      type: object
+      properties:
+        comment:
+          type: string
+          example: Доход потому что зарплату получил
+          description: Комментарий дохода
+        value:
+          type: number
+          example: 35000
+        category:
+          $ref: '#/components/schemas/CategoryUpdateDto'
+        getDate:
+          type: string
+          format: date
+          description: Дата Получения, ставится пользователем
+          example: 25.03.2024 12:42:41
+
+    ExpenseFullDto:
+      required:
+        - id
+        - comment
+        - value
+        - user
+        - category
+        - getDate
+        - lastUpdate
+        - creationTime
+      type: object
+      properties:
+        id:
+          type: string
+          example: 301acf9d-705a-4511-9ac9-2b859788ad7f
+        comment:
+          type: string
+          example: Расход Потому что зарплату получил
+          description: Комментарий расхода
+        value:
+          type: number
+          example: 35000
+        user:
+          $ref: '#/components/schemas/UserFullDto'
+        category:
+          $ref: '#/components/schemas/CategoryFullDto'
+        getDate:
+          type: string
+          format: date
+          description: Дата получения, ставится пользователем
+          example: 25.03.2024 12:42:41
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Дата последнего редактирования (ставится бд)
+          example : 26.03.2024 13:45:59
+        creationTime:
+          type: string
+          format: date-time
+          description: Дата создания (ставится бд)
+          example : 25.03.2024 12:42:41
+
+
+    ExpenseUpdateDto:
+      required:
+        - comment
+        - value
+        - category
+        - getDate
+      type: object
+      properties:
+        comment:
+          type: string
+          example: Комментарий
+          description: Комментарий расхода
+        value:
+          type: number
+          example: 35000
+        category:
+          $ref: '#/components/schemas/CategoryUpdateDto'
+        getDate:
+          type: string
+          format: date
+          description: Дата получения, ставится пользователем
+
+    UserFullDto:
+      required:
+        - id
+        - name
+        - email
+        - password
+        - incomes
+        - expenses
+        - creationTime
+        - lastUpdateTime
+      type: object
+      properties:
+        id:
+          type: string
+          example: 301acf9d-705a-4511-9ac9-2b859788ad7f
+        name:
+          type: string
+          example: Иван
+          description: Имя пользователя
+        email:
+          type: string
+          example: 8H0yI@example.com
+          description: Email пользователя
+        password:
+          type: string
+          example: qwerty
+          description: Пароль пользователя
+        incomes:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomeFullDto'
+        expenses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExpenseFullDto'
+        creationTime:
+          type: string
+          format: date-time
+          description: Дата создания (ставится бд)
+          example : 25.03.2024 12:42:41
+        lastUpdateTime:
+          type: string
+          format: date-time
+          description: Дата последнего редактирования (ставится бд)
+          example : 26.03.2024 13:45:59
+
+    UserUpdateDto:
+      required:
+        - name
+        - email
+        - password
+      type: object
+      properties:
+        name:
+          type: string
+          example: Иван
+          description: Имя пользователя
+        email:
+          type: string
+          example: 8H0yI@example.com
+          description: Email пользователя
+        password:
+          type: string
+          example: qwerty
+          description: Пароль пользователя

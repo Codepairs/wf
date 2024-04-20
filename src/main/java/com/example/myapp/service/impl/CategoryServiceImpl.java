@@ -1,23 +1,23 @@
 package com.example.myapp.service.impl;
-import com.example.myapp.dto.full.CategoryFullDto;
-import com.example.myapp.dto.full.ExpenseFullDto;
-import com.example.myapp.dto.full.IncomeFullDto;
+import com.example.myapp.dto.info.CategoryInfoDto;
+import com.example.myapp.dto.info.ExpenseInfoDto;
+import com.example.myapp.dto.info.IncomeInfoDto;
+import com.example.myapp.dto.search.CategorySearchDto;
+import com.example.myapp.dto.service.CategoryDto;
 import com.example.myapp.dto.update.CategoryUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.model.Category;
-import com.example.myapp.model.Expense;
-import com.example.myapp.model.Income;
 import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.repository.IncomeRepository;
 import com.example.myapp.service.CategoryService;
-import com.example.myapp.utils.ExpenseMappingUtils;
-import com.example.myapp.utils.IncomeMappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import com.example.myapp.utils.CategoryMappingUtils;
+import com.example.myapp.utils.MappingUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,19 +35,14 @@ public class CategoryServiceImpl implements CategoryService {
     private ExpenseRepository expenseRepository;
 
     @Autowired
-    private CategoryMappingUtils categoryMappingUtils;
-
-    @Autowired
-    private IncomeMappingUtils incomeMappingUtils;
-
-    @Autowired
-    private ExpenseMappingUtils expenseMappingUtils;
+    private MappingUtils mappingUtils;
 
     @Override
-    public CategoryFullDto create(CategoryUpdateDto category) throws SQLUniqueException {
+    public UUID create(CategoryDto category) throws SQLUniqueException {
         try {
-            Category newCategory = categoryMappingUtils.categoryUpdateToCategory(category);
-            return categoryMappingUtils.categoryToCategoryFull(categoryRepository.save(newCategory));
+            Category newCategory = mappingUtils.mapToCategory(category);
+            categoryRepository.save(newCategory);
+            return newCategory.getId();
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
@@ -55,38 +50,37 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public List<CategoryFullDto>  readAll() throws EmptyCategoriesException {
-        List<CategoryFullDto> categories = categoryRepository.findAll()
-                .stream().map(categoryMappingUtils::categoryToCategoryFull).toList();
+    public List<CategoryInfoDto>  readAll(CategorySearchDto categorySearchDto) throws EmptyCategoriesException {
+        int size = categorySearchDto.getSize();
+        int page = categorySearchDto.getPage();
+
+        PageRequest request = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
+        List<CategoryInfoDto> categories = categoryRepository.findAll(request).stream().map(mappingUtils::mapToCategoryInfoDto).toList();
         if (categories.isEmpty()) {
-           throw new EmptyCategoriesException();
+            throw new EmptyCategoriesException();
         }
         return categories;
     }
 
     @Override
-    public CategoryFullDto read(UUID id) throws NotFoundByIdException {
+    public CategoryInfoDto read(UUID id) throws NotFoundByIdException {
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
-        return categoryMappingUtils.categoryToCategoryFull(categoryRepository.getReferenceById(id));
+        return mappingUtils.mapToCategoryInfoDto(categoryRepository.getReferenceById(id));
     }
 
 
     @Override
-    public CategoryFullDto update(CategoryUpdateDto updateCategory, UUID id) throws NotFoundByIdException, SQLUniqueException {
+    public CategoryInfoDto update(CategoryUpdateDto updateCategory, UUID id) throws NotFoundByIdException, SQLUniqueException {
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
         Category category = categoryRepository.getReferenceById(id);
-        List<Expense> expenses = updateCategory.getExpenses().stream().map(expenseMappingUtils::expenseFullToExpense).toList();
-        List<Income> incomes = updateCategory.getIncomes().stream().map(incomeMappingUtils::incomeFullToIncome).toList();
         try {
             category.setName(updateCategory.getName());
-            category.setExpenses(expenses);
-            category.setIncomes(incomes);
             categoryRepository.save(category);
-            return categoryMappingUtils.categoryToCategoryFull(category);
+            return mappingUtils.mapToCategoryInfoDto(category);
         }
         catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
@@ -94,26 +88,27 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void delete(UUID id) throws NotFoundByIdException {
+    public UUID delete(UUID id) throws NotFoundByIdException {
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
         categoryRepository.deleteById(id);
+        return id;
     }
 
-    public List<IncomeFullDto> getIncomes(UUID id) throws NotFoundByIdException {
+    public List<IncomeInfoDto> getIncomes(UUID id) throws NotFoundByIdException {
         try {
             return incomeRepository.findAllByuser_id(id)
-                    .stream().map(incomeMappingUtils::incomeToIncomeFull).toList();
+                    .stream().map(mappingUtils::mapToIncomeInfoDto).toList();
         } catch (Exception e) {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
     }
 
-    public List<ExpenseFullDto> getExpenses(UUID id) throws NotFoundByIdException {
+    public List<ExpenseInfoDto> getExpenses(UUID id) throws NotFoundByIdException {
         try {
             return expenseRepository.findAllByuser_id(id)
-                    .stream().map(expenseMappingUtils::expenseToExpenseFull).toList();
+                    .stream().map(mappingUtils::mapToExpenseInfoDto).toList();
         }
         catch (Exception e) {
             throw new NotFoundByIdException("Category with id " + id + " not found");

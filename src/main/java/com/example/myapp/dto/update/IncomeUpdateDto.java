@@ -1,7 +1,6 @@
 package com.example.myapp.dto.update;
 
-import com.example.myapp.dto.full.CategoryFullDto;
-import com.example.myapp.dto.full.UserFullDto;
+import com.example.myapp.dto.info.CategoryInfoDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -11,7 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -22,18 +22,12 @@ public class IncomeUpdateDto {
     private String comment;
 
     @Min(value = 0, message = "Value can't be negative")
-    private Float value;
+    private BigDecimal value;
 
     @Valid
-    private UserFullDto user;
+    private CategoryInfoDto category;
 
-    @Valid
-    private CategoryFullDto category;
-
-    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
-    private LocalDateTime lastUpdateTime;
-
-    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
-    private LocalDateTime creationTime;
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private LocalDate getDate;
 
 }

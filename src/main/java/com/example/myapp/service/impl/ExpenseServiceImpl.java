@@ -1,97 +1,96 @@
 package com.example.myapp.service.impl;
 
 
-import com.example.myapp.dto.full.ExpenseFullDto;
+import com.example.myapp.dto.info.ExpenseInfoDto;
+import com.example.myapp.dto.search.ExpenseSearchDto;
+import com.example.myapp.dto.service.ExpenseDto;
 import com.example.myapp.dto.update.ExpenseUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.model.Category;
 import com.example.myapp.model.Expense;
-import com.example.myapp.model.User;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.service.ExpenseService;
-import com.example.myapp.utils.CategoryMappingUtils;
-import com.example.myapp.utils.ExpenseMappingUtils;
-import com.example.myapp.utils.UserMappingUtils;
+import com.example.myapp.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.UUID;
 
 
 @Service
 public class ExpenseServiceImpl implements ExpenseService {
+
     @Autowired
     private ExpenseRepository expenseRepository;
 
     @Autowired
-    private ExpenseMappingUtils expenseMappingUtils;
+    private MappingUtils mappingUtils;
 
-    @Autowired
-    private CategoryMappingUtils categoryMappingUtils;
-
-    @Autowired
-    private UserMappingUtils userMappingUtils;
 
     @Override
-    public ExpenseFullDto create(ExpenseUpdateDto expense) throws SQLUniqueException {
-        try{
-            Expense newExpense = expenseMappingUtils.expenseUpdateToExpense(expense);
-            return expenseMappingUtils.expenseToExpenseFull(expenseRepository.save(newExpense));
-        }
-        catch(Exception e){
+    public UUID create(ExpenseDto expense) throws SQLUniqueException {
+        try {
+            Expense newExpense = mappingUtils.mapToExpense(expense);
+            expenseRepository.save(newExpense);
+            return newExpense.getId();
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
 
 
     @Override
-    public List<ExpenseFullDto> readAll() throws EmptyExpenseException {
-        List<ExpenseFullDto> expenses = expenseRepository.findAll().stream(
-                ).map(expenseMappingUtils::expenseToExpenseFull).toList();
-        if (expenses.isEmpty()){
-            throw new EmptyExpenseException("Expense list is empty");
+    public List<ExpenseInfoDto> readAll(ExpenseSearchDto expenseSearchDto) throws EmptyExpenseException {
+        int size = expenseSearchDto.getSize();
+        int page = expenseSearchDto.getPage();
+
+        PageRequest request = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "value"));
+        List<ExpenseInfoDto> expenses = expenseRepository.findAll(request).stream().map(mappingUtils::mapToExpenseInfoDto).toList();
+        if (expenses.isEmpty()) {
+            throw new EmptyExpenseException("Expenses not found");
         }
         return expenses;
     }
 
     @Override
-    public ExpenseFullDto read(UUID id) throws NotFoundByIdException {
-        if (!expenseRepository.existsById(id)){
+    public ExpenseInfoDto read(UUID id) throws NotFoundByIdException {
+        if (!expenseRepository.existsById(id)) {
             throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
-        return expenseMappingUtils.expenseToExpenseFull(expenseRepository.getReferenceById(id));
+        return mappingUtils.mapToExpenseInfoDto(expenseRepository.getReferenceById(id));
     }
 
 
     @Override
-    public ExpenseFullDto update(ExpenseUpdateDto expense, UUID id) throws NotFoundByIdException, SQLUniqueException {
-        if (!expenseRepository.existsById(id)){
+    public ExpenseInfoDto update(ExpenseUpdateDto expense, UUID id) throws NotFoundByIdException, SQLUniqueException {
+        if (!expenseRepository.existsById(id)) {
             throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
         Expense newExpense = expenseRepository.getReferenceById(id);
-        Category category = categoryMappingUtils.categoryFullToCategory(expense.getCategory());
-        User user = userMappingUtils.userFullToUser(expense.getUser());
-        try{
+        Category category = mappingUtils.mapToCategory(expense.getCategory());
+        try {
             newExpense.setCategory(category);
             newExpense.setComment(expense.getComment());
             newExpense.setValue(expense.getValue());
-            newExpense.setUser(user);
-            return expenseMappingUtils.expenseToExpenseFull(expenseRepository.save(newExpense));
-        }
-        catch (Exception e){
+            return mappingUtils.mapToExpenseInfoDto(expenseRepository.save(newExpense));
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
 
     }
 
     @Override
-    public void delete(UUID id) throws NotFoundByIdException {
-        if (!expenseRepository.existsById(id)){
+    public UUID delete(UUID id) throws NotFoundByIdException {
+        if (!expenseRepository.existsById(id)) {
             throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
         expenseRepository.deleteById(id);
+        return id;
     }
 }
 

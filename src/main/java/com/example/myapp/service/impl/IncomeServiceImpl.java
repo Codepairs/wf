@@ -1,16 +1,19 @@
 package com.example.myapp.service.impl;
 
 
+import com.example.myapp.dto.create.IncomeCreateDto;
 import com.example.myapp.dto.info.IncomeInfoDto;
 import com.example.myapp.dto.search.IncomeSearchDto;
-import com.example.myapp.dto.service.IncomeDto;
 import com.example.myapp.dto.update.IncomeUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyIncomesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.model.Category;
 import com.example.myapp.model.Income;
+import com.example.myapp.model.User;
+import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.IncomeRepository;
+import com.example.myapp.repository.UserRepository;
 import com.example.myapp.service.IncomeService;
 import com.example.myapp.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +31,31 @@ public class IncomeServiceImpl implements IncomeService {
     @Autowired
     private IncomeRepository incomeRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
     @Autowired
     private MappingUtils mappingUtils;
 
 
     @Override
-    public UUID create(IncomeDto income) throws SQLUniqueException {
-        try {
-            Income newIncome = mappingUtils.mapToIncome(income);
-            incomeRepository.save(newIncome);
+    public UUID create(IncomeCreateDto incomeCreateDto) throws SQLUniqueException, NotFoundByIdException {
+        if (!userRepository.existsById(incomeCreateDto.getUserId())) {
+            throw new NotFoundByIdException("User with id " + incomeCreateDto.getUserId() + " not found");
 
-            return newIncome.getId();
+        }
+        if (!categoryRepository.existsById(incomeCreateDto.getCategoryId())) {
+            throw new NotFoundByIdException("Category with id " + incomeCreateDto.getCategoryId() + " not found");
+        }
+        try {
+            Category category = categoryRepository.getReferenceById(incomeCreateDto.getCategoryId());
+            User user = userRepository.getReferenceById(incomeCreateDto.getUserId());
+            Income savedIncome = incomeRepository.save(mappingUtils.mapToIncome(incomeCreateDto, category, user));
+            return savedIncome.getId();
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }

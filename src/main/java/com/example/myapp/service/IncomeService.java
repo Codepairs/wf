@@ -1,8 +1,8 @@
 package com.example.myapp.service;
 
+import com.example.myapp.dto.create.IncomeCreateDto;
 import com.example.myapp.dto.info.IncomeInfoDto;
 import com.example.myapp.dto.search.IncomeSearchDto;
-import com.example.myapp.dto.service.IncomeDto;
 import com.example.myapp.dto.update.IncomeUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.EmptyIncomesException;
@@ -18,7 +18,7 @@ public interface IncomeService {
      *
      * @param income - расход для создания
      */
-    UUID create(IncomeDto income) throws SQLUniqueException;
+    UUID create(IncomeCreateDto income) throws SQLUniqueException, NotFoundByIdException;
 
     /**
      * Возвращает список всех имеющихся расходов

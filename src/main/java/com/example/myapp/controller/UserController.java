@@ -1,8 +1,10 @@
 package com.example.myapp.controller;
-/*
-import com.example.myapp.dto.full.ExpenseFullDto;
-import com.example.myapp.dto.full.IncomeFullDto;
-import com.example.myapp.dto.full.UserFullDto;
+
+import com.example.myapp.dto.create.UserCreateDto;
+import com.example.myapp.dto.info.ExpenseInfoDto;
+import com.example.myapp.dto.info.IncomeInfoDto;
+import com.example.myapp.dto.info.UserInfoDto;
+import com.example.myapp.dto.search.UserSearchDto;
 import com.example.myapp.dto.update.UserUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyUsersException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
@@ -30,54 +32,52 @@ public class UserController {
 
 
     @PostMapping()
-    public ResponseEntity<?> create(@Valid @RequestBody UserUpdateDto user) throws SQLUniqueException {
-        UserFullDto userFullDto = userService.create(user);
-        return new ResponseEntity<>(userFullDto, HttpStatus.CREATED);
+    public ResponseEntity<UUID> create(@Valid @RequestBody UserCreateDto user) throws SQLUniqueException {
+        UUID id = userService.create(user);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
 
     @GetMapping()
-    public ResponseEntity<List<UserFullDto>> read() throws EmptyUsersException {
-        final List<UserFullDto> users = userService.readAll();
+    public ResponseEntity<List<UserInfoDto>> read(UserSearchDto user) throws EmptyUsersException {
+        List<UserInfoDto> users = userService.readAll(user);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping(value = "incomesById")
-    public ResponseEntity<List<IncomeFullDto>> readIncomesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
-        List<IncomeFullDto> incomes = userService.getIncomes(id);
+    @GetMapping(value = "/incomesById")
+    public ResponseEntity<List<IncomeInfoDto>> readIncomesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        List<IncomeInfoDto> incomes = userService.getIncomes(id);
         return new ResponseEntity<>(incomes, HttpStatus.OK);
     }
 
 
-    @GetMapping(value = "expensesById")
-    public ResponseEntity<List<ExpenseFullDto>> readExpensesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
-        List<ExpenseFullDto> expenses= userService.getExpenses(id);
+    @GetMapping(value = "/expensesById")
+    public ResponseEntity<List<ExpenseInfoDto>> readExpensesById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        List<ExpenseInfoDto> expenses = userService.getExpenses(id);
         return new ResponseEntity<>(expenses, HttpStatus.OK);
     }
 
 
-    @GetMapping(value = "usersById")
-    public ResponseEntity<UserFullDto> readById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
-        UserFullDto user = userService.read(id);
+    @GetMapping(value = "/usersById")
+    public ResponseEntity<UserInfoDto> readById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        UserInfoDto user = userService.read(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 
-
     @PutMapping(value = "/usersById")
-    public ResponseEntity<UserFullDto> update(@RequestParam(value = "id") @Valid @PathVariable UUID id, @Valid @RequestBody UserUpdateDto user) throws NotFoundByIdException, SQLUniqueException {
-        final UserFullDto userFullDto = userService.update(user, id);
-        return new ResponseEntity<>(userFullDto, HttpStatus.OK);
+    public ResponseEntity<UserInfoDto> update(@RequestParam(value = "id") @Valid @PathVariable UUID id, @Valid @RequestBody UserUpdateDto user) throws NotFoundByIdException, SQLUniqueException {
+        UserInfoDto userInfoDto = userService.update(user, id);
+        return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
     }
 
     @Transactional
-    @DeleteMapping
-    public ResponseEntity<Void> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
-        userService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @DeleteMapping()
+    public ResponseEntity<UUID> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        UUID deletedId = userService.delete(id);
+        return new ResponseEntity<>(deletedId, HttpStatus.OK);
     }
 
 
 }
 
-*/

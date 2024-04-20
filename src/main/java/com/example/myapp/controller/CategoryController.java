@@ -5,7 +5,6 @@ import com.example.myapp.dto.info.CategoryInfoDto;
 import com.example.myapp.dto.info.ExpenseInfoDto;
 import com.example.myapp.dto.info.IncomeInfoDto;
 import com.example.myapp.dto.search.CategorySearchDto;
-import com.example.myapp.dto.service.CategoryDto;
 import com.example.myapp.dto.update.CategoryUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
@@ -37,8 +36,7 @@ public class CategoryController {
 
     @PostMapping()
     public ResponseEntity<UUID> create(@Valid @RequestBody CategoryCreateDto category) throws SQLUniqueException {
-        CategoryDto dtoCategory = categoryMappingUtils.mapToCategory(category);
-        UUID id = categoryService.create(dtoCategory);
+        UUID id = categoryService.create(category);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 

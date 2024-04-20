@@ -3,7 +3,6 @@ package com.example.myapp.controller;
 import com.example.myapp.dto.create.ExpenseCreateDto;
 import com.example.myapp.dto.info.ExpenseInfoDto;
 import com.example.myapp.dto.search.ExpenseSearchDto;
-import com.example.myapp.dto.service.ExpenseDto;
 import com.example.myapp.dto.update.ExpenseUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
@@ -35,13 +34,12 @@ public class ExpenseController {
 
 
     @PostMapping()
-    public ResponseEntity<UUID> create(@Valid @RequestBody ExpenseCreateDto expense) throws SQLUniqueException {
-        ExpenseDto expenseDto = mappingUtils.mapToExpense(expense);
-        UUID id = expenseService.create(expenseDto);
+    public ResponseEntity<UUID> create(@Valid @RequestBody ExpenseCreateDto expense) throws SQLUniqueException, NotFoundByIdException {
+        UUID id = expenseService.create(expense);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<ExpenseInfoDto>> readAll(@Valid @RequestBody ExpenseSearchDto expenseSearchDto) throws EmptyExpenseException {
         List<ExpenseInfoDto> expenses = expenseService.readAll(expenseSearchDto);
         return new ResponseEntity<>(expenses, HttpStatus.OK);

@@ -3,7 +3,6 @@ package com.example.myapp.controller;
 import com.example.myapp.dto.create.IncomeCreateDto;
 import com.example.myapp.dto.info.IncomeInfoDto;
 import com.example.myapp.dto.search.IncomeSearchDto;
-import com.example.myapp.dto.service.IncomeDto;
 import com.example.myapp.dto.update.IncomeUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.EmptyIncomesException;
@@ -37,16 +36,15 @@ public class IncomeController {
 
 
     @PostMapping()
-    public ResponseEntity<UUID> create(@Valid @RequestBody IncomeCreateDto incomeCreateDto) throws SQLUniqueException {
-        IncomeDto incomeDto = mappingUtils.mapToIncomeDto(incomeCreateDto);
-        UUID id = incomeService.create(incomeDto);
+    public ResponseEntity<UUID> create(@Valid @RequestBody IncomeCreateDto incomeCreateDto) throws SQLUniqueException, NotFoundByIdException {
+        UUID id = incomeService.create(incomeCreateDto);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<IncomeInfoDto>> readAll(@Valid @RequestBody IncomeSearchDto incomeSearchDto) throws EmptyIncomesException, EmptyExpenseException {
-        List<IncomeInfoDto> incomeInfoDtos = incomeService.readAll(incomeSearchDto);
-        return new ResponseEntity<>(incomeInfoDtos, HttpStatus.OK);
+        List<IncomeInfoDto> incomesInfoDto = incomeService.readAll(incomeSearchDto);
+        return new ResponseEntity<>(incomesInfoDto, HttpStatus.OK);
     }
 
     @GetMapping(value = "/incomesById")

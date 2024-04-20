@@ -12,5 +12,5 @@ import java.util.UUID;
 @Repository
 public interface IncomeRepository extends JpaRepository<Income, UUID> {
 
-    List<Income> findAllByuser_id(UUID user_id);
+    List<Income> findAllByuser_id(UUID userId);
 }

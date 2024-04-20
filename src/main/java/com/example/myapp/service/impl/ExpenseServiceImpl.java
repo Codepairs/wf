@@ -1,16 +1,19 @@
 package com.example.myapp.service.impl;
 
 
+import com.example.myapp.dto.create.ExpenseCreateDto;
 import com.example.myapp.dto.info.ExpenseInfoDto;
 import com.example.myapp.dto.search.ExpenseSearchDto;
-import com.example.myapp.dto.service.ExpenseDto;
 import com.example.myapp.dto.update.ExpenseUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.model.Category;
 import com.example.myapp.model.Expense;
+import com.example.myapp.model.User;
+import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.ExpenseRepository;
+import com.example.myapp.repository.UserRepository;
 import com.example.myapp.service.ExpenseService;
 import com.example.myapp.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +32,29 @@ public class ExpenseServiceImpl implements ExpenseService {
     private ExpenseRepository expenseRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private MappingUtils mappingUtils;
 
 
     @Override
-    public UUID create(ExpenseDto expense) throws SQLUniqueException {
+    public UUID create(ExpenseCreateDto expenseCreateDto) throws SQLUniqueException, NotFoundByIdException {
+        if (!userRepository.existsById(expenseCreateDto.getUserId())) {
+            throw new NotFoundByIdException("User with id " + expenseCreateDto.getUserId() + " not found");
+
+        }
+        if (!categoryRepository.existsById(expenseCreateDto.getCategoryId())) {
+            throw new NotFoundByIdException("Category with id " + expenseCreateDto.getCategoryId() + " not found");
+        }
         try {
-            Expense newExpense = mappingUtils.mapToExpense(expense);
-            expenseRepository.save(newExpense);
-            return newExpense.getId();
+            Category category = categoryRepository.getReferenceById(expenseCreateDto.getCategoryId());
+            User user = userRepository.getReferenceById(expenseCreateDto.getUserId());
+            Expense savedExpense = expenseRepository.save(mappingUtils.mapToExpense(expenseCreateDto, category, user));
+            return savedExpense.getId();
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }

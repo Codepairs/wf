@@ -1,13 +1,10 @@
 package com.example.myapp.model;
 
 import com.example.myapp.converter.DateConverter;
-import com.example.myapp.dto.full.CategoryFullDto;
-import com.example.myapp.dto.full.UserFullDto;
+import com.example.myapp.converter.NonLocalDateConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -37,16 +34,14 @@ public class Income {
     private BigDecimal value;
 
     @Column
-    @Convert(converter = DateConverter.class)
+    @Convert(converter = NonLocalDateConverter.class)
     private LocalDate getDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 

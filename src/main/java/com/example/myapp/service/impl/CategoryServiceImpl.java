@@ -1,9 +1,10 @@
 package com.example.myapp.service.impl;
+
+import com.example.myapp.dto.create.CategoryCreateDto;
 import com.example.myapp.dto.info.CategoryInfoDto;
 import com.example.myapp.dto.info.ExpenseInfoDto;
 import com.example.myapp.dto.info.IncomeInfoDto;
 import com.example.myapp.dto.search.CategorySearchDto;
-import com.example.myapp.dto.service.CategoryDto;
 import com.example.myapp.dto.update.CategoryUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
@@ -13,11 +14,11 @@ import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.repository.IncomeRepository;
 import com.example.myapp.service.CategoryService;
+import com.example.myapp.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import com.example.myapp.utils.MappingUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     private MappingUtils mappingUtils;
 
     @Override
-    public UUID create(CategoryDto category) throws SQLUniqueException {
+    public UUID create(CategoryCreateDto category) throws SQLUniqueException {
         try {
             Category newCategory = mappingUtils.mapToCategory(category);
             categoryRepository.save(newCategory);
@@ -50,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public List<CategoryInfoDto>  readAll(CategorySearchDto categorySearchDto) throws EmptyCategoriesException {
+    public List<CategoryInfoDto> readAll(CategorySearchDto categorySearchDto) throws EmptyCategoriesException {
         int size = categorySearchDto.getSize();
         int page = categorySearchDto.getPage();
 
@@ -81,8 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setName(updateCategory.getName());
             categoryRepository.save(category);
             return mappingUtils.mapToCategoryInfoDto(category);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
@@ -109,8 +109,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             return expenseRepository.findAllByuser_id(id)
                     .stream().map(mappingUtils::mapToExpenseInfoDto).toList();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
     }

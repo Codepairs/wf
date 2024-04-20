@@ -1,18 +1,13 @@
 package com.example.myapp.model;
 
 import com.example.myapp.converter.DateConverter;
-import com.example.myapp.dto.full.ExpenseFullDto;
-import com.example.myapp.dto.full.IncomeFullDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,12 +40,12 @@ public class Category {
     private LocalDateTime creationTime;
 
     @OneToMany(mappedBy = "category",
-              fetch = FetchType.LAZY,
-              cascade = CascadeType.ALL)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.MERGE)
     List<Income> incomes;
 
     @OneToMany(mappedBy = "category",
-              fetch = FetchType.LAZY,
-              cascade = CascadeType.ALL)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.MERGE)
     List<Expense> expenses;
 }

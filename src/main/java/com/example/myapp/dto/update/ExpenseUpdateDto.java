@@ -1,7 +1,5 @@
 package com.example.myapp.dto.update;
 
-import com.example.myapp.dto.full.CategoryFullDto;
-import com.example.myapp.dto.full.UserFullDto;
 import com.example.myapp.dto.info.CategoryInfoDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
@@ -14,7 +12,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor

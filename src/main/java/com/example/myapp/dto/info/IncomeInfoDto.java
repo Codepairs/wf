@@ -1,7 +1,5 @@
 package com.example.myapp.dto.info;
 
-import com.example.myapp.dto.full.CategoryFullDto;
-import com.example.myapp.dto.full.UserFullDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;

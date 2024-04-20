@@ -1,8 +1,6 @@
 package com.example.myapp.model;
 
 import com.example.myapp.converter.DateConverter;
-import com.example.myapp.dto.full.ExpenseFullDto;
-import com.example.myapp.dto.full.IncomeFullDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,20 +29,16 @@ public class User {
     @Column(name = "user_name")
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user",
-              fetch = FetchType.LAZY,
-              cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     List<Income> incomes;
 
-    @OneToMany(mappedBy = "user",
-              fetch = FetchType.LAZY,
-              cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     List<Expense> expenses;
 
     @Column(name = "last_update")

@@ -1,4 +1,4 @@
-package com.example.myapp.dto.create;
+package com.example.myapp.dto.income;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
@@ -17,12 +17,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ExpenseCreateDto {
+public class IncomeCreateDto {
 
     @NotBlank(message = "Comment cannot be empty")
     private String comment;
 
     @Min(value = 0, message = "Value cannot be negative")
+    @NotNull(message = "Value cannot be null")
     private BigDecimal value;
 
     @NotNull(message = "CategoryId cannot be null")

@@ -1,4 +1,4 @@
-package com.example.myapp.dto.info;
+package com.example.myapp.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

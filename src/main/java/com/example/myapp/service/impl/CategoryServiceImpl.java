@@ -1,11 +1,11 @@
 package com.example.myapp.service.impl;
 
-import com.example.myapp.dto.create.CategoryCreateDto;
-import com.example.myapp.dto.info.CategoryInfoDto;
-import com.example.myapp.dto.info.ExpenseInfoDto;
-import com.example.myapp.dto.info.IncomeInfoDto;
-import com.example.myapp.dto.search.CategorySearchDto;
-import com.example.myapp.dto.update.CategoryUpdateDto;
+import com.example.myapp.dto.category.CategoryCreateDto;
+import com.example.myapp.dto.category.CategoryInfoDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.category.CategorySearchDto;
+import com.example.myapp.dto.category.CategoryUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;

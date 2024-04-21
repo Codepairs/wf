@@ -1,9 +1,9 @@
 package com.example.myapp.controller;
 
-import com.example.myapp.dto.create.ExpenseCreateDto;
-import com.example.myapp.dto.info.ExpenseInfoDto;
-import com.example.myapp.dto.search.ExpenseSearchDto;
-import com.example.myapp.dto.update.ExpenseUpdateDto;
+import com.example.myapp.dto.expense.ExpenseCreateDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.expense.ExpenseSearchDto;
+import com.example.myapp.dto.expense.ExpenseUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;

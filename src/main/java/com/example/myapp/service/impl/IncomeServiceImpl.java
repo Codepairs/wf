@@ -1,10 +1,10 @@
 package com.example.myapp.service.impl;
 
 
-import com.example.myapp.dto.create.IncomeCreateDto;
-import com.example.myapp.dto.info.IncomeInfoDto;
-import com.example.myapp.dto.search.IncomeSearchDto;
-import com.example.myapp.dto.update.IncomeUpdateDto;
+import com.example.myapp.dto.income.IncomeCreateDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.income.IncomeSearchDto;
+import com.example.myapp.dto.income.IncomeUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyIncomesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
@@ -90,11 +90,15 @@ public class IncomeServiceImpl implements IncomeService {
             throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
         Income newIncome = incomeRepository.getReferenceById(id);
-        Category category = mappingUtils.mapToCategory(income.getCategory());
+        if (!categoryRepository.existsById(income.getCategoryId())) {
+            throw new NotFoundByIdException("Category with id " + income.getCategoryId() + " not found");
+        }
+        Category category = categoryRepository.getReferenceById(income.getCategoryId());
         try {
             newIncome.setCategory(category);
             newIncome.setComment(income.getComment());
             newIncome.setValue(income.getValue());
+            newIncome.setGetDate(income.getGetDate());
             return mappingUtils.mapToIncomeInfoDto(incomeRepository.save(newIncome));
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());

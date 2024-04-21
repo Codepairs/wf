@@ -1,10 +1,10 @@
 package com.example.myapp.service.impl;
 
 
-import com.example.myapp.dto.create.ExpenseCreateDto;
-import com.example.myapp.dto.info.ExpenseInfoDto;
-import com.example.myapp.dto.search.ExpenseSearchDto;
-import com.example.myapp.dto.update.ExpenseUpdateDto;
+import com.example.myapp.dto.expense.ExpenseCreateDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.expense.ExpenseSearchDto;
+import com.example.myapp.dto.expense.ExpenseUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
@@ -89,11 +89,16 @@ public class ExpenseServiceImpl implements ExpenseService {
             throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
         Expense newExpense = expenseRepository.getReferenceById(id);
-        Category category = mappingUtils.mapToCategory(expense.getCategory());
+        if (!categoryRepository.existsById(expense.getCategoryId())){
+            throw new NotFoundByIdException("Category with id" + expense.getCategoryId() + "not found");
+        }
+
+        Category category = categoryRepository.getReferenceById(expense.getCategoryId());
         try {
             newExpense.setCategory(category);
             newExpense.setComment(expense.getComment());
             newExpense.setValue(expense.getValue());
+            newExpense.setGetDate(expense.getGetDate());
             return mappingUtils.mapToExpenseInfoDto(expenseRepository.save(newExpense));
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());

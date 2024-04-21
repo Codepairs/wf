@@ -1,9 +1,9 @@
 package com.example.myapp.controller;
 
-import com.example.myapp.dto.create.IncomeCreateDto;
-import com.example.myapp.dto.info.IncomeInfoDto;
-import com.example.myapp.dto.search.IncomeSearchDto;
-import com.example.myapp.dto.update.IncomeUpdateDto;
+import com.example.myapp.dto.income.IncomeCreateDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.income.IncomeSearchDto;
+import com.example.myapp.dto.income.IncomeUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyExpenseException;
 import com.example.myapp.handler.exceptions.EmptyIncomesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;

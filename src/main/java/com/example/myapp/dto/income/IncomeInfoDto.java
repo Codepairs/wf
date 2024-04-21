@@ -1,6 +1,9 @@
-package com.example.myapp.dto.create;
+package com.example.myapp.dto.income;
 
+import com.example.myapp.dto.category.CategoryInfoDto;
+import com.example.myapp.dto.user.UserInfoDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,26 +17,26 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class IncomeCreateDto {
+public class IncomeInfoDto {
+
+    private UUID id;
 
     @NotBlank(message = "Comment cannot be empty")
     private String comment;
 
     @Min(value = 0, message = "Value cannot be negative")
+    @NotNull(message = "Value cannot be null")
     private BigDecimal value;
 
-    @NotNull(message = "CategoryId cannot be null")
-    private UUID categoryId;
-
-    @NotNull(message = "UserId cannot be null")
-    private UUID userId;
-
     @JsonFormat(pattern = "dd.MM.yyyy")
-    @NotNull(message = "Date cannot be null")
     private LocalDate getDate;
 
+    @Valid
+    private UserInfoDto user;
 
+    @Valid
+    private CategoryInfoDto category;
 }

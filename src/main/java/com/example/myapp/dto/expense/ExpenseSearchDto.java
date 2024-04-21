@@ -1,4 +1,4 @@
-package com.example.myapp.dto.search;
+package com.example.myapp.dto.expense;
 
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class IncomeSearchDto {
+public class ExpenseSearchDto {
     @Positive
     @Builder.Default
     private int size = 100;

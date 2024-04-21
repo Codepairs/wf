@@ -1,11 +1,11 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dto.create.UserCreateDto;
-import com.example.myapp.dto.info.ExpenseInfoDto;
-import com.example.myapp.dto.info.IncomeInfoDto;
-import com.example.myapp.dto.info.UserInfoDto;
-import com.example.myapp.dto.search.UserSearchDto;
-import com.example.myapp.dto.update.UserUpdateDto;
+import com.example.myapp.dto.user.UserCreateDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.user.UserInfoDto;
+import com.example.myapp.dto.user.UserSearchDto;
+import com.example.myapp.dto.user.UserUpdateDto;
 import com.example.myapp.handler.exceptions.EmptyUsersException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;

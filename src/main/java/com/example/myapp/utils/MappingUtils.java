@@ -1,13 +1,13 @@
 package com.example.myapp.utils;
 
-import com.example.myapp.dto.create.CategoryCreateDto;
-import com.example.myapp.dto.create.ExpenseCreateDto;
-import com.example.myapp.dto.create.IncomeCreateDto;
-import com.example.myapp.dto.create.UserCreateDto;
-import com.example.myapp.dto.info.CategoryInfoDto;
-import com.example.myapp.dto.info.ExpenseInfoDto;
-import com.example.myapp.dto.info.IncomeInfoDto;
-import com.example.myapp.dto.info.UserInfoDto;
+import com.example.myapp.dto.category.CategoryCreateDto;
+import com.example.myapp.dto.expense.ExpenseCreateDto;
+import com.example.myapp.dto.income.IncomeCreateDto;
+import com.example.myapp.dto.user.UserCreateDto;
+import com.example.myapp.dto.category.CategoryInfoDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.user.UserInfoDto;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.model.Category;
 import com.example.myapp.model.Expense;

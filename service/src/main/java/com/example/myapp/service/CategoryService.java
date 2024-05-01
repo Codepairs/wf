@@ -1,15 +1,14 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dto.full.CategoryFullDto;
-import com.example.myapp.dto.full.ExpenseFullDto;
-import com.example.myapp.dto.full.IncomeFullDto;
-import com.example.myapp.dto.update.CategoryUpdateDto;
-import com.example.myapp.exceptions.EmptyCategoriesException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
-import com.example.myapp.model.Category;
-import com.example.myapp.model.Expense;
-import com.example.myapp.model.Income;
+import com.example.myapp.dto.category.CategoryCreateDto;
+import com.example.myapp.dto.category.CategoryInfoDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.category.CategorySearchDto;
+import com.example.myapp.dto.category.CategoryUpdateDto;
+import com.example.myapp.handler.exceptions.EmptyCategoriesException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,54 +16,59 @@ import java.util.UUID;
 public interface CategoryService {
     /**
      * Создает новую категорию
+     *
      * @param category - категория для создания
      */
-    CategoryFullDto create(CategoryUpdateDto category) throws SQLUniqueException;
+    UUID create(CategoryCreateDto category) throws SQLUniqueException;
 
     /**
      * Возвращает список всех имеющихся категорий
+     *
      * @return список категорий
      */
-    List<CategoryFullDto> readAll() throws EmptyCategoriesException;
+    List<CategoryInfoDto> readAll(CategorySearchDto categorySearchDto) throws EmptyCategoriesException;
 
     /**
      * Возвращает категорию по ее ID
+     *
      * @param id - ID категории
      * @return - объект категории с заданным ID
      */
-    CategoryFullDto read(UUID id) throws NotFoundByIdException;
+    CategoryInfoDto read(UUID id) throws NotFoundByIdException;
 
     /**
      * Обновляет катеорию с заданным ID,
      * в соответствии с переданным категорией
+     *
      * @param category - категория в соответствии с которой нужно обновить данные
-     * @param id - id категории которую нужно обновить
+     * @param id       - id категории которую нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
-    CategoryFullDto update(CategoryUpdateDto category, UUID id) throws SQLUniqueException, NotFoundByIdException;
+    CategoryInfoDto update(CategoryUpdateDto category, UUID id) throws SQLUniqueException, NotFoundByIdException;
 
     /**
      * Удаляет категорию с заданным ID
+     *
      * @param id - id категории, которую нужно удалить
      * @return - true если категория была удалена, иначе false
      */
-    void delete(UUID id) throws NotFoundByIdException;
+    UUID delete(UUID id) throws NotFoundByIdException;
 
 
     /**
      * Получает все доходы из категории по ее ID
-     * @param category_id - id категории, для которой нужно получить доходы
+     *
+     * @param categoryId - id категории, для которой нужно получить доходы
      * @return - список доходов
      */
 
-    List<Income> getIncomesByUserId(Long category_id);
-    List<IncomeFullDto> getIncomes(UUID categoryId) throws NotFoundByIdException;
+    List<IncomeInfoDto> getIncomes(UUID categoryId) throws NotFoundByIdException;
 
     /**
      * Получает все расходы из категории по ее ID
-     * @param category_id - id категории, для которой нужно получить расходы
+     *
+     * @param categoryId - id категории, для которой нужно получить расходы
      * @return - список расходов
      */
-    List<Expense> getExpensesByUserId(Long category_id);
-    List<ExpenseFullDto> getExpenses(UUID categoryId) throws NotFoundByIdException;
+    List<ExpenseInfoDto> getExpenses(UUID categoryId) throws NotFoundByIdException;
 }

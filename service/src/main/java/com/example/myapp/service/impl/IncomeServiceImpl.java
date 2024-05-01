@@ -1,109 +1,118 @@
 package com.example.myapp.service.impl;
 
 
-<<<<<<< HEAD
-import com.example.myapp.model.Expense;
-=======
-import com.example.myapp.dto.full.IncomeFullDto;
-import com.example.myapp.dto.update.IncomeUpdateDto;
-import com.example.myapp.exceptions.EmptyIncomesException;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
->>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
+import com.example.myapp.dto.income.IncomeCreateDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.income.IncomeSearchDto;
+import com.example.myapp.dto.income.IncomeUpdateDto;
+import com.example.myapp.handler.exceptions.EmptyIncomesException;
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.model.Category;
 import com.example.myapp.model.Income;
+import com.example.myapp.model.User;
+import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.IncomeRepository;
+import com.example.myapp.repository.UserRepository;
 import com.example.myapp.service.IncomeService;
-import com.example.myapp.utils.IncomeMappingUtils;
+import com.example.myapp.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
 public class IncomeServiceImpl implements IncomeService {
+
     @Autowired
     private IncomeRepository incomeRepository;
 
     @Autowired
-    private IncomeMappingUtils incomeMappingUtils;
+    private UserRepository userRepository;
 
-    @Override
-<<<<<<< HEAD
-    public List<Income>  readAll() {
-        return incomeRepository.findAll();
-    }
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    @Override
-    public Income read(Long id) {
-        return incomeRepository.getById(id);
-    }
 
-    @Override
-    public List<Income> readAllByCategoryId(Long id) { return incomeRepository.findAllBycategory_id(id); }
+    @Autowired
+    private MappingUtils mappingUtils;
 
 
     @Override
-    public boolean update(Income income, Long id) {
-        if (incomeRepository.existsById((id))) {
-            income.setId(id);
-            incomeRepository.save(income);
-            return true;
-=======
-    public IncomeFullDto create(IncomeUpdateDto income) throws SQLUniqueException {
-        try{
-            Income income1 = incomeMappingUtils.incomeUpdateToIncome(income);
-            return incomeMappingUtils.incomeToIncomeFull(incomeRepository.save(income1));
->>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
+    public UUID create(IncomeCreateDto incomeCreateDto) throws SQLUniqueException, NotFoundByIdException {
+        if (!userRepository.existsById(incomeCreateDto.getUserId())) {
+            throw new NotFoundByIdException("User with id " + incomeCreateDto.getUserId() + " not found");
+
         }
-        catch (Exception e){
+        if (!categoryRepository.existsById(incomeCreateDto.getCategoryId())) {
+            throw new NotFoundByIdException("Category with id " + incomeCreateDto.getCategoryId() + " not found");
+        }
+        try {
+            Category category = categoryRepository.getReferenceById(incomeCreateDto.getCategoryId());
+            User user = userRepository.getReferenceById(incomeCreateDto.getUserId());
+            Income savedIncome = incomeRepository.save(mappingUtils.mapToIncome(incomeCreateDto, category, user));
+            return savedIncome.getId();
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
 
 
     @Override
-    public List<IncomeFullDto> readAll() throws EmptyIncomesException {
-        List<IncomeFullDto> incomes = incomeRepository.findAll().stream().map(incomeMappingUtils::incomeToIncomeFull).toList();
+    public List<IncomeInfoDto> readAll(IncomeSearchDto incomeSearchDto) throws EmptyIncomesException {
+        int size = incomeSearchDto.getSize();
+        int page = incomeSearchDto.getPage();
+
+        PageRequest request = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "value"));
+        List<IncomeInfoDto> incomes = incomeRepository.findAll(request).stream().map(mappingUtils::mapToIncomeInfoDto).toList();
         if (incomes.isEmpty()) {
-            throw new EmptyIncomesException("Incomes list is empty");
+            throw new EmptyIncomesException("Expenses not found");
         }
         return incomes;
     }
 
     @Override
-    public IncomeFullDto read(UUID id) throws NotFoundByIdException {
+    public IncomeInfoDto read(UUID id) throws NotFoundByIdException {
         if (!incomeRepository.existsById(id)) {
-            throw new NotFoundByIdException("Income with id " + id + " not found");
+            throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
-        return incomeMappingUtils.incomeToIncomeFull(incomeRepository.getReferenceById(id));
+        return mappingUtils.mapToIncomeInfoDto(incomeRepository.getReferenceById(id));
     }
 
 
     @Override
-    public IncomeFullDto update(IncomeUpdateDto income, UUID id) throws NotFoundByIdException, SQLUniqueException {
+    public IncomeInfoDto update(IncomeUpdateDto income, UUID id) throws NotFoundByIdException, SQLUniqueException {
         if (!incomeRepository.existsById(id)) {
-            throw new NotFoundByIdException("Income with id " + id + " not found");
+            throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
-        Income income1 = incomeRepository.getReferenceById(id);
-        try{
-            income1.setCategory(income.getCategory());
-            income1.setComment(income.getComment());
-            income1.setValue(income.getValue());
-            income1.setUser(income.getUser());
-            return incomeMappingUtils.incomeToIncomeFull(incomeRepository.save(income1));
+        Income newIncome = incomeRepository.getReferenceById(id);
+        if (!categoryRepository.existsById(income.getCategoryId())) {
+            throw new NotFoundByIdException("Category with id " + income.getCategoryId() + " not found");
         }
-        catch (Exception e){
+        Category category = categoryRepository.getReferenceById(income.getCategoryId());
+        try {
+            newIncome.setCategory(category);
+            newIncome.setComment(income.getComment());
+            newIncome.setValue(income.getValue());
+            newIncome.setGetDate(income.getGetDate());
+            return mappingUtils.mapToIncomeInfoDto(incomeRepository.save(newIncome));
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
+
     }
 
     @Override
-    public void delete(UUID id) throws NotFoundByIdException {
+    public UUID delete(UUID id) throws NotFoundByIdException {
         if (!incomeRepository.existsById(id)) {
-            throw new NotFoundByIdException("Income with id " + id + " not found");
+            throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
         incomeRepository.deleteById(id);
+        return id;
     }
 }
-
 

@@ -1,21 +1,22 @@
 package com.example.myapp.model;
 
 import com.example.myapp.converter.DateConverter;
-import com.example.myapp.dto.full.CategoryFullDto;
-import com.example.myapp.dto.full.UserFullDto;
+import com.example.myapp.converter.NonLocalDateConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "expenses")
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,22 +24,26 @@ import java.util.UUID;
 public class Expense {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "comment")
     private String comment;
 
     @Column(name = "value")
-    private Float value;
+    private BigDecimal value;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @Column(name = "get_date")
+    @Convert(converter = NonLocalDateConverter.class)
+    private LocalDate getDate;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserFullDto user;
+    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryFullDto category;
+    private Category category;
 
     @Column(name = "last_update")
     @UpdateTimestamp

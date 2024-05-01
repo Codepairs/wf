@@ -1,14 +1,9 @@
 package com.example.myapp.model;
 
 import com.example.myapp.converter.DateConverter;
-import com.example.myapp.dto.full.ExpenseFullDto;
-import com.example.myapp.dto.full.IncomeFullDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,7 +13,8 @@ import java.util.UUID;
 
 
 @Entity
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,27 +23,23 @@ import java.util.UUID;
 public class User {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "user_name")
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user",
-              fetch = FetchType.LAZY,
-              cascade = CascadeType.ALL)
-    List<IncomeFullDto> incomes;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    List<Income> incomes;
 
-    @OneToMany(mappedBy = "user",
-              fetch = FetchType.LAZY,
-              cascade = CascadeType.ALL)
-    List<ExpenseFullDto> expenses;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    List<Expense> expenses;
 
     @Column(name = "last_update")
     @UpdateTimestamp

@@ -1,7 +1,7 @@
 package org.example.controller;
 
-import com.example.myapp.dto.full.UserFullDto;
-import com.example.myapp.dto.update.UserUpdateDto;
+import com.example.myapp.dto.user.UserInfoDto;
+import com.example.myapp.dto.user.UserUpdateDto;
 import com.example.myapp.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

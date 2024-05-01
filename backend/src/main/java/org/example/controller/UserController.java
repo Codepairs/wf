@@ -1,15 +1,16 @@
 package org.example.controller;
 
-import com.example.myapp.dto.full.ExpenseFullDto;
-import com.example.myapp.dto.full.IncomeFullDto;
-import com.example.myapp.dto.full.UserFullDto;
-import com.example.myapp.dto.update.UserUpdateDto;
-import com.example.myapp.exceptions.NotFoundByIdException;
-import com.example.myapp.exceptions.SQLUniqueException;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.user.UserInfoDto;
+import com.example.myapp.dto.user.UserUpdateDto;
+
+import com.example.myapp.handler.exceptions.NotFoundByIdException;
+import com.example.myapp.handler.exceptions.SQLUniqueException;
 import com.example.myapp.model.Expense;
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
-import com.example.myapp.model.View;
+
 import com.example.myapp.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -72,11 +73,11 @@ public class UserController {
     }
 
 
-    @JsonView(View.REST.class)
+
     @GetMapping(value = "/users/{id}/expenses")
-    public ResponseEntity<List<ExpenseFullDto>> read_expenses(@PathVariable(name = "id") UUID id) {
+    public ResponseEntity<List<ExpenseInfoDto>> read_expenses(@PathVariable(name = "id") UUID id) {
         try {
-            List<ExpenseFullDto> expenses = userService.getExpenses(id);
+            List<ExpenseInfoDto> expenses = userService.getExpenses(id);
             return expenses != null &&  !expenses.isEmpty()
                     ? new ResponseEntity<>(expenses, HttpStatus.OK)
                     : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -86,11 +87,11 @@ public class UserController {
         }
     }
 
-    @JsonView(View.REST.class)
+
     @GetMapping(value = "/users/{id}/incomes")
-    public ResponseEntity<List<IncomeFullDto>> read_incomes(@PathVariable(name = "id") UUID id) {
+    public ResponseEntity<List<IncomeInfoDto>> read_incomes(@PathVariable(name = "id") UUID id) {
         try {
-            List<IncomeFullDto> incomes = userService.getIncomes(id);
+            List<IncomeInfoDto> incomes = userService.getIncomes(id);
             return incomes != null &&  !incomes.isEmpty()
                     ? new ResponseEntity<>(incomes, HttpStatus.OK)
                     : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -102,9 +103,9 @@ public class UserController {
 
 
     @GetMapping(value = "/users/{id}")
-    public ResponseEntity<UserFullDto> read(@PathVariable(name = "id") UUID id) {
+    public ResponseEntity<UserInfoDto> read(@PathVariable(name = "id") UUID id) {
         try{
-            final UserFullDto user = userService.read(id);
+            final UserInfoDto user = userService.read(id);
             return user != null
                 ? new ResponseEntity<>(user, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -118,7 +119,7 @@ public class UserController {
     @PutMapping(value = "/users/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody UserUpdateDto user) {
         try {
-            final UserFullDto updated = userService.update(user, id);
+            final UserInfoDto updated = userService.update(user, id);
             return updated != null
                     ? new ResponseEntity<>(updated, HttpStatus.OK)
                     : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);

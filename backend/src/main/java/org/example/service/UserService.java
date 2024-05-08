@@ -6,7 +6,10 @@ import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.dto.user.UserInfoDto;
 import com.example.myapp.dto.user.UserSearchDto;
+import com.example.myapp.dto.user.UserUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,33 +18,58 @@ import java.util.List;
 
 @Service
 public class UserService {
+
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        // Do any additional configuration here
+        return builder.build();
+    }
+
     @Autowired
-    private RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate;
 
-
-    public List<UserInfoDto> readAll(UserSearchDto user) {
+    public List readAll() {
         return restTemplate.getForObject("http://localhost:8080/users", List.class);
     }
 
-    public UUID create(UserCreateDto user) {
-        return restTemplate.postForObject("http://localhost:8080/users", user, UUID.class);
+
+    public UserInfoDto update(UserUpdateDto user, UUID id) {
+        return restTemplate.postForObject("http://localhost:8080/users/" + id.toString(), user, UserInfoDto.class);
+    }
+
+
+    public UserInfoDto delete(UUID id) {
+        return restTemplate.getForObject("http://localhost:8080/users/" + id.toString(), UserInfoDto.class);
+    }
+
+
+    public UserInfoDto create(UserCreateDto user) {
+        return restTemplate.postForObject("http://localhost:8080/users", user, UserInfoDto.class);
+    }
+
+
+    public UserInfoDto read(UUID id) {
+        return restTemplate.getForObject("http://localhost:8080/users/" + id.toString(), UserInfoDto.class);
     }
 
     public UserInfoDto readById(UUID id) {
-        return restTemplate.getForObject("http://localhost:8080/users/" + id, UserInfoDto.class);
+        return restTemplate.getForObject("http://localhost:8080/users/" + id.toString(), UserInfoDto.class);
     }
 
     public List<IncomeInfoDto> getIncomes(UUID id) {
-        return restTemplate.getForObject("http://localhost:8080/users/" + id + "/incomes", List.class);
+        return restTemplate.getForObject("http://localhost:8080/users/" + id.toString() + "/incomes", List.class);
     }
 
     public List<ExpenseInfoDto> getExpenses(UUID id) {
-        return restTemplate.getForObject("http://localhost:8080/users/" + id + "/expenses", List.class);
+        return restTemplate.getForObject("http://localhost:8080/users/" + id.toString() + "/expenses", List.class);
     }
 
     public List<ExpenseInfoDto> getExpensesCategory(UUID id) {
-        return restTemplate.getForObject("http://localhost:8080/users/" + id + "/expenses", List.class);
+        return restTemplate.getForObject("http://localhost:8080/users/" + id.toString() + "/expenses", List.class);
     }
+
+
 
 
 }

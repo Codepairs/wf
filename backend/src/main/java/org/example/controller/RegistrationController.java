@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 @Controller
 public class RegistrationController {
 
+    /*
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
@@ -46,4 +47,6 @@ public class RegistrationController {
         model.addAttribute("user", user);
         return "registration-success";
     }
+
+     */
 }

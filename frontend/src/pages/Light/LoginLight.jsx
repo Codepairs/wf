@@ -27,6 +27,9 @@ const LoginLight = () => {
         const password = event.target.value;
         setLoginData({ ...loginData, password });
     };
+    const handleRedirectToMain = () => {
+        history.push('/main');
+    };
     const [isRemember, setRemember] = useState()
     // для отправления запросов
     const login = async (event) => {
@@ -83,8 +86,8 @@ const LoginLight = () => {
     const handleLogin = () => {
         const { username, password } = loginData;
         console.log(username, password);
-        if (username === '' || password === '') {
-            setShowForgotPassword(false);
+        if (username === 'TestUser' || password === '123') {
+            handleRedirectToMain;
         } else {
             // когда-нибудь тут будет проверка :)
             if (false) {

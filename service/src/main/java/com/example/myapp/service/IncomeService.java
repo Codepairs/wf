@@ -1,14 +1,11 @@
 package com.example.myapp.service;
 
-<<<<<<< HEAD
 import com.example.myapp.model.Expense;
-=======
 import com.example.myapp.dto.full.IncomeFullDto;
 import com.example.myapp.dto.update.IncomeUpdateDto;
 import com.example.myapp.exceptions.EmptyIncomesException;
 import com.example.myapp.exceptions.NotFoundByIdException;
 import com.example.myapp.exceptions.SQLUniqueException;
->>>>>>> 7c874bf9201aece73d925cf334f9c183676c67c0
 import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 

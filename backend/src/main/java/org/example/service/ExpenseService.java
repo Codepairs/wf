@@ -11,6 +11,7 @@ import com.example.myapp.dto.user.UserInfoDto;
 import com.example.myapp.dto.user.UserSearchDto;
 import com.example.myapp.dto.user.UserUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -23,14 +24,12 @@ import java.util.List;
 public class ExpenseService {
 
 
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        // Do any additional configuration here
-        return builder.build();
-    }
-
     @Autowired
     private RestTemplate restTemplate;
+
+    public ExpenseService (@Autowired @Qualifier("mainServiceRestTemplate") RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public List readAll() {
         return restTemplate.getForObject("http://localhost:8080/expenses", List.class);

@@ -2,13 +2,15 @@ package com.example.myapp.service;
 
 import com.example.myapp.dto.category.CategoryCreateDto;
 import com.example.myapp.dto.category.CategoryInfoDto;
-import com.example.myapp.dto.expense.ExpenseInfoDto;
-import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.dto.category.CategorySearchDto;
 import com.example.myapp.dto.category.CategoryUpdateDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.search.criteria.SearchCriteria;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -71,4 +73,6 @@ public interface CategoryService {
      * @return - список расходов
      */
     List<ExpenseInfoDto> getExpenses(UUID categoryId) throws NotFoundByIdException;
+
+    List<CategoryInfoDto> getByFilter(List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyCategoriesException;
 }

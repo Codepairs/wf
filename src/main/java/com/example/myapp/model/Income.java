@@ -34,8 +34,8 @@ public class Income {
     private BigDecimal value;
 
     @Column
-    @Convert(converter = NonLocalDateConverter.class)
-    private LocalDate getDate;
+    @Convert(converter = DateConverter.class)
+    private LocalDateTime getDate;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

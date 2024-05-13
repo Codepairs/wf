@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -31,8 +32,8 @@ public class IncomeInfoDto {
     @NotNull(message = "Value cannot be null")
     private BigDecimal value;
 
-    @JsonFormat(pattern = "dd.MM.yyyy")
-    private LocalDate getDate;
+    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
+    private LocalDateTime getDate;
 
     @Valid
     private UserInfoDto user;

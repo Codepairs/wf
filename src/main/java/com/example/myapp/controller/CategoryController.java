@@ -2,18 +2,20 @@ package com.example.myapp.controller;
 
 import com.example.myapp.dto.category.CategoryCreateDto;
 import com.example.myapp.dto.category.CategoryInfoDto;
-import com.example.myapp.dto.expense.ExpenseInfoDto;
-import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.dto.category.CategorySearchDto;
 import com.example.myapp.dto.category.CategoryUpdateDto;
+import com.example.myapp.dto.expense.ExpenseInfoDto;
+import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.search.criteria.SearchCriteria;
 import com.example.myapp.service.CategoryService;
 import com.example.myapp.utils.MappingUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -41,7 +43,7 @@ public class CategoryController {
     }
 
 
-    @GetMapping()
+    @PostMapping("/pagination")
     public ResponseEntity<List<CategoryInfoDto>> getCategoryAll(@Valid @RequestBody CategorySearchDto categorySearchDto) throws EmptyCategoriesException {
         List<CategoryInfoDto> categories = categoryService.readAll(categorySearchDto);
         return new ResponseEntity<>(categories, HttpStatus.OK);
@@ -80,5 +82,10 @@ public class CategoryController {
     public ResponseEntity<UUID> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
         UUID deletedId = categoryService.delete(id);
         return new ResponseEntity<>(deletedId, HttpStatus.OK);
+    }
+
+    @PostMapping("/getByFilter")
+    public ResponseEntity<List<CategoryInfoDto>> getByFilter(@Valid @RequestBody List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyCategoriesException {
+        return new ResponseEntity<>(categoryService.getByFilter(conditions, pageable), HttpStatus.OK);
     }
 }

@@ -4,10 +4,9 @@ import com.example.myapp.dto.income.IncomeCreateDto;
 import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.dto.income.IncomeSearchDto;
 import com.example.myapp.dto.income.IncomeUpdateDto;
-import com.example.myapp.handler.exceptions.EmptyExpenseException;
-import com.example.myapp.handler.exceptions.EmptyIncomesException;
-import com.example.myapp.handler.exceptions.NotFoundByIdException;
-import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.handler.exceptions.*;
+import com.example.myapp.search.criteria.SearchCriteria;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -52,4 +51,6 @@ public interface IncomeService {
      * @return - true если расход был удален, иначе false
      */
     UUID delete(UUID id) throws NotFoundByIdException;
+
+    List<IncomeInfoDto> getByFilter(List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyCategoriesException;
 }

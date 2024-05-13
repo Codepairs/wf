@@ -45,7 +45,14 @@ public class MappingUtils {
     }
 
     public IncomeInfoDto mapToIncomeInfoDto(Income income) {
-        return IncomeInfoDto.builder().id(income.getId()).comment(income.getComment()).value(income.getValue()).user(mapToUserInfoDto(income.getUser())).getDate(income.getGetDate()).category(mapToCategoryInfoDto(income.getCategory())).build();
+        return IncomeInfoDto.builder()
+                .id(income.getId())
+                .comment(income.getComment())
+                .value(income.getValue())
+                .user(mapToUserInfoDto(income.getUser()))
+                .getDate(income.getGetDate())
+                .category(mapToCategoryInfoDto(income.getCategory()))
+                .build();
     }
 
     public ExpenseInfoDto mapToExpenseInfoDto(Expense expense) {

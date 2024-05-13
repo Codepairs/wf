@@ -2,6 +2,7 @@ package com.example.myapp.handler;
 
 import com.example.myapp.handler.exceptions.*;
 import jakarta.validation.ConstraintViolationException;
+import org.hibernate.query.sqm.PathElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -103,6 +104,24 @@ public class Advice {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Response> handleException(ConstraintViolationException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PathElementException.class)
+    public ResponseEntity<Response> handleException(PathElementException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Response> handleException(IllegalStateException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();

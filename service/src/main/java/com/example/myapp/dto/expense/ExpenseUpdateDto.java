@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -31,9 +32,9 @@ public class ExpenseUpdateDto {
     @NotNull(message = "CategoryId cannot be null")
     private UUID categoryId;
 
-    @JsonFormat(pattern = "dd.MM.yyyy")
+    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
     @NotNull(message = "Date cannot be null")
-    private LocalDate getDate;
+    private LocalDateTime getDate;
 
 
 }

@@ -1,18 +1,22 @@
 package com.example.myapp.controller;
 
+import com.example.myapp.dto.category.CategoryInfoDto;
 import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.dto.expense.ExpenseInfoDto;
 import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.dto.user.UserInfoDto;
 import com.example.myapp.dto.user.UserSearchDto;
 import com.example.myapp.dto.user.UserUpdateDto;
+import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.EmptyUsersException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.search.criteria.SearchCriteria;
 import com.example.myapp.service.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +42,7 @@ public class UserController {
     }
 
 
-    @GetMapping()
+    @PostMapping("/pagination")
     public ResponseEntity<List<UserInfoDto>> read(UserSearchDto user) throws EmptyUsersException {
         List<UserInfoDto> users = userService.readAll(user);
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -78,6 +82,9 @@ public class UserController {
         return new ResponseEntity<>(deletedId, HttpStatus.OK);
     }
 
-
+    @PostMapping("/getByFilter")
+    public ResponseEntity<List<UserInfoDto>> getByFilter(@Valid @RequestBody List<SearchCriteria<?>>  conditions, Pageable pageable) throws EmptyCategoriesException {
+        return new ResponseEntity<>(userService.getByFilter(conditions, pageable), HttpStatus.OK);
+    }
 }
 

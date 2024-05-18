@@ -1,18 +1,18 @@
 package com.example.myapp.controller;
 
+import com.example.myapp.dto.category.CategoryInfoDto;
 import com.example.myapp.dto.income.IncomeCreateDto;
 import com.example.myapp.dto.income.IncomeInfoDto;
 import com.example.myapp.dto.income.IncomeSearchDto;
 import com.example.myapp.dto.income.IncomeUpdateDto;
-import com.example.myapp.handler.exceptions.EmptyExpenseException;
-import com.example.myapp.handler.exceptions.EmptyIncomesException;
-import com.example.myapp.handler.exceptions.NotFoundByIdException;
-import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.handler.exceptions.*;
+import com.example.myapp.search.criteria.SearchCriteria;
 import com.example.myapp.service.IncomeService;
 import com.example.myapp.utils.MappingUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -41,7 +41,7 @@ public class IncomeController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
-    @GetMapping()
+    @PostMapping("/pagination")
     public ResponseEntity<List<IncomeInfoDto>> readAll(@Valid @RequestBody IncomeSearchDto incomeSearchDto) throws EmptyIncomesException, EmptyExpenseException {
         List<IncomeInfoDto> incomesInfoDto = incomeService.readAll(incomeSearchDto);
         return new ResponseEntity<>(incomesInfoDto, HttpStatus.OK);
@@ -67,5 +67,10 @@ public class IncomeController {
     public ResponseEntity<UUID> delete(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
         UUID deletedId = incomeService.delete(id);
         return new ResponseEntity<>(deletedId, HttpStatus.OK);
+    }
+
+    @PostMapping("/getByFilter")
+    public ResponseEntity<List<IncomeInfoDto>> getByFilter(@Valid @RequestBody List<SearchCriteria<?>>  conditions, Pageable pageable) throws EmptyCategoriesException {
+        return new ResponseEntity<>(incomeService.getByFilter(conditions, pageable), HttpStatus.OK);
     }
 }

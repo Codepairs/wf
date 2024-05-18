@@ -1,14 +1,17 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.dto.expense.ExpenseInfoDto;
 import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.dto.user.UserInfoDto;
 import com.example.myapp.dto.user.UserSearchDto;
 import com.example.myapp.dto.user.UserUpdateDto;
+import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.EmptyUsersException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.search.criteria.SearchCriteria;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -71,4 +74,6 @@ public interface UserService {
      * @return - список расходов
      */
     List<ExpenseInfoDto> getExpenses(UUID user_id) throws NotFoundByIdException;
+
+    List<UserInfoDto> getByFilter(List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyCategoriesException;
 }

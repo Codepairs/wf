@@ -10,7 +10,6 @@ import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.EmptyUsersException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
-import com.example.myapp.model.Expense;
 import com.example.myapp.model.User;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.repository.IncomeRepository;
@@ -151,6 +150,14 @@ public class UserServiceImpl implements UserService {
         PageRequest request = PageRequest.of(page, size, pageable.getSort());
         Page<User> users = userRepository.findAll(specification, request);
         return users.getContent().stream().map(mappingUtils::mapToUserInfoDto).toList();
+    }
+
+    @Override
+    public User read(String name) throws NotFoundByIdException {
+        if (!userRepository.existsByName(name)) {
+            throw new NotFoundByIdException("User with name " + name + " not found");
+        }
+        return userRepository.findByName(name).get();
     }
 }
 

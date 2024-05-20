@@ -28,6 +28,8 @@ tags:
     description: Операции с пользователями
   - name: UserById
     description: Операции с пользователями по id
+  - name: Auth
+    description: Операции аутентификации
 
 
 
@@ -712,13 +714,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /users:
+  /register:
     post:
       tags:
-        - User
-      summary: Добавление нового пользователя
-      description: Adds a new user
-      operationId: createUser
+        - Auth
+      summary: Регистрация нового пользователя
+      description: Register a new user
+      operationId: registerUser
       requestBody:
         required: true
         content:
@@ -727,7 +729,7 @@ paths:
               $ref: '#/components/schemas/UserCreateDto'
       responses:
         '200':
-          description: Успешная операция, возвращает UUID созданного объекта
+          description: Успешная операция, возвращает UUID созданного объекта. СОХРАНЯЕТ JWT токен в headers
           content:
             application/json:
               schema:
@@ -735,6 +737,29 @@ paths:
                 example: 101acf9d-715a-4511-9ac9-2b859788ad7f
 
         '400':
+          description: Неудачная операция
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Вход в систему с использованием логина и пароля
+      description: Login to the system
+      operationId: login User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Успешная операция, сохраняет в headers JWT токен
+
+        '401':
           description: Неудачная операция
           content:
             application/json:
@@ -1250,6 +1275,21 @@ components:
           type: string
           example: qwerty
           description: Обновленный пароль пользователя
+
+    LoginDto:
+      required:
+        - name
+        - password
+      type: object
+      properties:
+        name:
+          type: string
+          example: Nagibator228
+          description: Имя пользователя
+        password:
+          type: string
+          example: qwerty
+          description: пароль пользователя
 
     Filter:
       required:

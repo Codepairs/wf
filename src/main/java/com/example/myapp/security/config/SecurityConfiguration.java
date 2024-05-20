@@ -1,7 +1,9 @@
-package security.config;
+package com.example.myapp.security.config;
 
+import com.example.myapp.security.entrypoint.AuthEntryPointJwt;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,9 +13,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import security.config.AuthenticationConfigConstants;
-import security.filter.JWTAuthenticationFilter;
-import security.filter.JWTAuthorizationFilter;
+import com.example.myapp.security.filter.JWTAuthenticationFilter;
+import com.example.myapp.security.filter.JWTAuthorizationFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -21,6 +22,8 @@ import security.filter.JWTAuthorizationFilter;
 
 public class SecurityConfiguration {
 
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -33,10 +36,12 @@ public class SecurityConfiguration {
                 .authorizeRequests((auth) -> auth
                         .requestMatchers(HttpMethod.POST, AuthenticationConfigConstants.SIGN_UP_URL).permitAll()
                         .anyRequest().authenticated()
+
                         .and()
                         .addFilter(new JWTAuthenticationFilter(authenticationManager))
                         .addFilter(new JWTAuthorizationFilter(authenticationManager))
                 )
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()

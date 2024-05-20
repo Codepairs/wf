@@ -1,4 +1,4 @@
-package security.service;
+package com.example.myapp.security.service;
 
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.model.User;

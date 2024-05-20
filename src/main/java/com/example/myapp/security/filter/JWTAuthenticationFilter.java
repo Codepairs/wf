@@ -1,9 +1,10 @@
-package security.filter;
+package com.example.myapp.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import security.config.AuthenticationConfigConstants;
+import com.example.myapp.security.config.AuthenticationConfigConstants;
 import com.example.myapp.dto.user.UserCreateDto;
+import com.example.myapp.security.entrypoint.AuthEntryPointJwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,22 +32,19 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
 
+
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        try {
-            UserCreateDto creds = new ObjectMapper()
-                    .readValue(request.getInputStream(), UserCreateDto.class);
-            log.info("Credentials: {}", creds.toString());
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            creds.getName(),
-                            creds.getPassword(),
-                            new ArrayList<>())
-            );
-        } catch (AuthenticationException e) {
-            throw new UsernameNotFoundException((e.getMessage()));
-        }
+        UserCreateDto creds = new ObjectMapper()
+                .readValue(request.getInputStream(), UserCreateDto.class);
+        log.info("Credentials: {}", creds.toString());
+        return authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        creds.getName(),
+                        creds.getPassword(),
+                        new ArrayList<>())
+        );
     }
 
     @Override
@@ -55,5 +54,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + AuthenticationConfigConstants.EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()));
         response.addHeader(AuthenticationConfigConstants.HEADER_STRING, AuthenticationConfigConstants.TOKEN_PREFIX + token);
+
     }
 }

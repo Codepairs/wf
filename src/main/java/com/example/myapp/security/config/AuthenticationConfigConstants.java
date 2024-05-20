@@ -1,4 +1,4 @@
-package security.config;
+package com.example.myapp.security.config;
 
 public class AuthenticationConfigConstants {
     public static final String SECRET = "Java_to_Dev_Secret";

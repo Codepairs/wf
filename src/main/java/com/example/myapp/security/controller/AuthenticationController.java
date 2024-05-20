@@ -1,4 +1,4 @@
-package com.example.myapp.controller;
+package com.example.myapp.security.controller;
 
 import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.handler.exceptions.SQLUniqueException;

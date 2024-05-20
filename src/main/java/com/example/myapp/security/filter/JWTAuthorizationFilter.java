@@ -1,8 +1,8 @@
-package security.filter;
+package com.example.myapp.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import security.config.AuthenticationConfigConstants;
+import com.example.myapp.security.config.AuthenticationConfigConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

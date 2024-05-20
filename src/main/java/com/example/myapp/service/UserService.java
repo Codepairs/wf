@@ -10,6 +10,7 @@ import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.EmptyUsersException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.model.User;
 import com.example.myapp.search.criteria.SearchCriteria;
 import org.springframework.data.domain.Pageable;
 
@@ -40,6 +41,14 @@ public interface UserService {
     UserInfoDto read(UUID id) throws NotFoundByIdException;
 
     /**
+     * Возвращает клиента по его ID
+     *
+     * @param id - ID клиента
+     * @return - объект клиента с заданным ID
+     */
+    User read(String name) throws NotFoundByIdException;
+
+    /**
      * Обновляет клиента с заданным ID,
      * в соответствии с переданным клиентом
      *
@@ -47,6 +56,10 @@ public interface UserService {
      * @param id   - id клиента которого нужно обновить
      * @return - true если данные были обновлены, иначе false
      */
+
+
+
+
     UserInfoDto update(UserUpdateDto user, UUID id) throws SQLUniqueException, NotFoundByIdException;
 
     /**

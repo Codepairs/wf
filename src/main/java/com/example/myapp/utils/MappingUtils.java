@@ -16,12 +16,15 @@ import com.example.myapp.model.User;
 import com.example.myapp.repository.CategoryRepository;
 import com.example.myapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MappingUtils {
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -74,7 +77,7 @@ public class MappingUtils {
 
 
     public User mapToUser(UserCreateDto userCreateDto) {
-        return User.builder().name(userCreateDto.getName()).email(userCreateDto.getEmail()).password(userCreateDto.getPassword()).build();
+        return User.builder().name(userCreateDto.getName()).email(userCreateDto.getEmail()).password(passwordEncoder.encode(userCreateDto.getPassword())).build();
     }
 
     public User mapToUser(UserInfoDto userInfoDto) {

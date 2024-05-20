@@ -35,13 +35,6 @@ public class UserController {
     private UserService userService;
 
 
-    @PostMapping()
-    public ResponseEntity<UUID> create(@Valid @RequestBody UserCreateDto user) throws SQLUniqueException {
-        UUID id = userService.create(user);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
-    }
-
-
     @PostMapping("/pagination")
     public ResponseEntity<List<UserInfoDto>> read(UserSearchDto user) throws EmptyUsersException {
         List<UserInfoDto> users = userService.readAll(user);

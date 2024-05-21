@@ -87,7 +87,7 @@ const LoginLight = () => {
         const { username, password } = loginData;
         console.log(username, password);
         if (username === 'TestUser' || password === '123') {
-            handleRedirectToMain;
+            handleRedirectToMain();
         } else {
             // когда-нибудь тут будет проверка :)
             if (false) {

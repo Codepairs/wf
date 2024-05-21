@@ -1,5 +1,6 @@
 package com.example.myapp.security.config;
 
+import com.example.myapp.repository.UserRepository;
 import com.example.myapp.security.entrypoint.AuthEntryPointJwt;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,9 @@ public class SecurityConfiguration {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
@@ -38,7 +42,7 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
 
                         .and()
-                        .addFilter(new JWTAuthenticationFilter(authenticationManager))
+                        .addFilter(new JWTAuthenticationFilter(authenticationManager, userRepository))
                         .addFilter(new JWTAuthorizationFilter(authenticationManager))
                 )
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))

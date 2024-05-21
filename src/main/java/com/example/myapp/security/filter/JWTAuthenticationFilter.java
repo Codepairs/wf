@@ -2,6 +2,7 @@ package com.example.myapp.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.myapp.repository.UserRepository;
 import com.example.myapp.security.config.AuthenticationConfigConstants;
 import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.security.entrypoint.AuthEntryPointJwt;
@@ -10,6 +11,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +30,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
 
     @SneakyThrows
@@ -54,6 +62,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + AuthenticationConfigConstants.EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(AuthenticationConfigConstants.SECRET.getBytes()));
         response.addHeader(AuthenticationConfigConstants.HEADER_STRING, AuthenticationConfigConstants.TOKEN_PREFIX + token);
+        log.info("User: {}", ((User) auth.getPrincipal()).getUsername());
+        response.addHeader(AuthenticationConfigConstants.USER_STRING, userRepository.findByName(((User) auth.getPrincipal()).getUsername()).get().getId().toString());
 
     }
 }

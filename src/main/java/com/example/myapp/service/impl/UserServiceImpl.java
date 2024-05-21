@@ -1,8 +1,8 @@
 package com.example.myapp.service.impl;
 
-import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.dto.expense.ExpenseInfoDto;
 import com.example.myapp.dto.income.IncomeInfoDto;
+import com.example.myapp.dto.user.UserCreateDto;
 import com.example.myapp.dto.user.UserInfoDto;
 import com.example.myapp.dto.user.UserSearchDto;
 import com.example.myapp.dto.user.UserUpdateDto;
@@ -10,6 +10,8 @@ import com.example.myapp.handler.exceptions.EmptyCategoriesException;
 import com.example.myapp.handler.exceptions.EmptyUsersException;
 import com.example.myapp.handler.exceptions.NotFoundByIdException;
 import com.example.myapp.handler.exceptions.SQLUniqueException;
+import com.example.myapp.model.Expense;
+import com.example.myapp.model.Income;
 import com.example.myapp.model.User;
 import com.example.myapp.repository.ExpenseRepository;
 import com.example.myapp.repository.IncomeRepository;
@@ -20,6 +22,7 @@ import com.example.myapp.search.strategy.PredicateStrategy;
 import com.example.myapp.service.UserService;
 import com.example.myapp.utils.MappingUtils;
 import jakarta.persistence.criteria.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +37,7 @@ import java.util.UUID;
 import static org.springframework.data.util.CastUtils.cast;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -158,6 +162,68 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundByIdException("User with name " + name + " not found");
         }
         return userRepository.findByName(name).get();
+    }
+
+    @Override
+    public List<ExpenseInfoDto> getExpensesByFilterAndId(List<SearchCriteria<?>> conditions, Pageable pageable, UUID user_id) throws NotFoundByIdException {
+
+        int size = 100;
+        int page = pageable.getPageNumber();
+        log.info("page size: " + size + " page number: " + page);
+
+        Specification<Expense> specification = (entity, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+            predicate = cb.and(cb.equal(entity.get("user").get("id"), user_id));
+            for (SearchCriteria<?> criteria : conditions) {
+                OperationType operationType = criteria.getOperation();
+                PredicateStrategy<?> strategy = criteria.getStrategy();
+                switch (operationType) {
+                    case EQUALS ->
+                            predicate = cb.and(predicate, strategy.getEqualsPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case RIGHT_LIMIT ->
+                            predicate = cb.and(predicate, strategy.getRightLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case LEFT_LIMIT ->
+                            predicate = cb.and(predicate, strategy.getLeftLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case LIKE ->
+                            predicate = cb.and(predicate, strategy.getLikePattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                }
+            }
+            return predicate;
+        };
+        PageRequest request = PageRequest.of(page, size, pageable.getSort());
+        Page<Expense> expenses = expenseRepository.findAll(specification, request);
+        return expenses.getContent().stream().map(mappingUtils::mapToExpenseInfoDto).toList();
+    }
+
+    @Override
+    public List<IncomeInfoDto> getIncomesByFilterAndId(List<SearchCriteria<?>> conditions, Pageable pageable, UUID user_id) throws NotFoundByIdException {
+
+        int size = 100;
+        int page = pageable.getPageNumber();
+        log.info("page size: " + size + " page number: " + page);
+
+        Specification<Income> specification = (entity, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+            predicate = cb.and(cb.equal(entity.get("user").get("id"), user_id));
+            for (SearchCriteria<?> criteria : conditions) {
+                OperationType operationType = criteria.getOperation();
+                PredicateStrategy<?> strategy = criteria.getStrategy();
+                switch (operationType) {
+                    case EQUALS ->
+                            predicate = cb.and(predicate, strategy.getEqualsPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case RIGHT_LIMIT ->
+                            predicate = cb.and(predicate, strategy.getRightLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case LEFT_LIMIT ->
+                            predicate = cb.and(predicate, strategy.getLeftLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case LIKE ->
+                            predicate = cb.and(predicate, strategy.getLikePattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                }
+            }
+            return predicate;
+        };
+        PageRequest request = PageRequest.of(page, size, pageable.getSort());
+        Page<Income> incomes = incomeRepository.findAll(specification, request);
+        return incomes.getContent().stream().map(mappingUtils::mapToIncomeInfoDto).toList();
     }
 }
 

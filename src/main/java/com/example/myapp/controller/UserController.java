@@ -79,5 +79,15 @@ public class UserController {
     public ResponseEntity<List<UserInfoDto>> getByFilter(@Valid @RequestBody List<SearchCriteria<?>>  conditions, Pageable pageable) throws EmptyCategoriesException {
         return new ResponseEntity<>(userService.getByFilter(conditions, pageable), HttpStatus.OK);
     }
+
+    @PostMapping("/expensesByIdAndFilter")
+    public ResponseEntity<List<ExpenseInfoDto>> getExpensesByFilter(@Valid @RequestBody List<SearchCriteria<?>>  conditions, Pageable pageable, @RequestParam(value = "id") @Valid @PathVariable UUID id) throws EmptyCategoriesException, NotFoundByIdException {
+        return new ResponseEntity<>(userService.getExpensesByFilterAndId(conditions, pageable, id), HttpStatus.OK);
+    }
+
+    @PostMapping("/incomesByIdAndFilter")
+    public ResponseEntity<List<IncomeInfoDto>> getIncomesByFilter(@Valid @RequestBody List<SearchCriteria<?>>  conditions, Pageable pageable, @RequestParam(value = "id") @Valid @PathVariable UUID id) throws EmptyCategoriesException, NotFoundByIdException {
+        return new ResponseEntity<>(userService.getIncomesByFilterAndId(conditions, pageable, id), HttpStatus.OK);
+    }
 }
 

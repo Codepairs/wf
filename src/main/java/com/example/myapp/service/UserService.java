@@ -89,4 +89,8 @@ public interface UserService {
     List<ExpenseInfoDto> getExpenses(UUID user_id) throws NotFoundByIdException;
 
     List<UserInfoDto> getByFilter(List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyCategoriesException;
+
+    List<ExpenseInfoDto> getExpensesByFilterAndId(List<SearchCriteria<?>> conditions, Pageable pageable,UUID user_id) throws NotFoundByIdException;
+
+    List<IncomeInfoDto> getIncomesByFilterAndId(List<SearchCriteria<?>> conditions, Pageable pageable,UUID user_id) throws NotFoundByIdException;
 }

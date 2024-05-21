@@ -924,6 +924,85 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+
+  /users/incomesByIdAndFilter:
+    post:
+      tags:
+        - UserById
+      summary: Получение доходов пользователя по id и фильтру
+      operationId: getIncomesByIdAndFilter
+      parameters:
+        - name: id
+          in: query
+          description: Id of user to return
+          required: true
+          schema:
+            type: string
+            example: 101acf9d-715a-4511-9ac9-2b859788ad7f
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Filter'
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IncomeInfoDto'
+        '400':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/expensesByIdAndFilter:
+    post:
+      tags:
+        - UserById
+      summary: Получение расходов пользователя по id и фильтру
+      operationId: getExpensesByIdAndFilter
+      parameters:
+        - name: id
+          in: query
+          description: Id of user to return
+          required: true
+          schema:
+            type: string
+            example: 101acf9d-715a-4511-9ac9-2b859788ad7f
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Filter'
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExpenseInfoDto'
+        '400':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     CategoryCreateDto:

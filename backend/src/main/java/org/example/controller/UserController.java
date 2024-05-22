@@ -1,6 +1,8 @@
 package org.example.controller;
 
 import com.example.myapp.dto.user.UserCreateDto;
+import jakarta.servlet.http.HttpSession;
+import org.example.dto.UserLoginDto;
 import org.example.service.UserService;
 import com.example.myapp.dto.expense.ExpenseInfoDto;
 import com.example.myapp.dto.income.IncomeInfoDto;
@@ -18,14 +20,15 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -69,23 +72,38 @@ public class UserController {
     }
 
 
-    @GetMapping("/login")
-    public ModelAndView login() {
-        return new ModelAndView("login");
-    }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto user) {
 
-
-
-    @GetMapping(value = "/users/{id}/expenses")
-    public ResponseEntity<List<ExpenseInfoDto>> read_expenses(@PathVariable(name = "id") UUID id) {
-        List<ExpenseInfoDto> expenses = userService.getExpenses(id);
-        return expenses != null &&  !expenses.isEmpty()
-                ? new ResponseEntity<>(expenses, HttpStatus.OK)
+        final ResponseEntity<Map> token = userService.login(user);
+        System.out.println(token);
+        return token != null
+                ? new ResponseEntity<>(token, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
 
-    @GetMapping(value = "/users/{id}/incomes")
+
+
+    /*
+    @GetMapping("/users/expensesById/{id}")
+    public ResponseEntity<List<ExpenseInfoDto>> read_expenses(@PathVariable UUID id, HttpServletRequest request) {
+        String accessToken = (String) request.getSession().getAttribute("jwtToken");
+        if (accessToken != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + accessToken);
+            HttpEntity<Object> entity = new HttpEntity<>(headers);
+            restTemplate.exchange("http://localhost:8080/users/expenses/" + id, HttpMethod.GET, entity, new ParameterizedTypeReference<List<ExpenseInfoDto>>(){});
+        } else {
+            // Handle unauthorized case here
+        }
+    }
+    */
+
+
+
+    @GetMapping(value = "/users/incomesById/{id}")
     public ResponseEntity<List<IncomeInfoDto>> read_incomes(@PathVariable(name = "id") UUID id) {
         List<IncomeInfoDto> incomes = userService.getIncomes(id);
         return incomes != null &&  !incomes.isEmpty()
@@ -94,7 +112,7 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/users/{id}")
+    @GetMapping(value = "/users/usersById/{id}")
     public ResponseEntity<UserInfoDto> read(@PathVariable(name = "id") UUID id) {
         final UserInfoDto user = userService.read(id);
         return user != null
@@ -103,7 +121,7 @@ public class UserController {
     }
 
 
-    @PutMapping(value = "/users/{id}")
+    @PutMapping(value = "/users/usersById/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody UserUpdateDto user) {
         final UserInfoDto updated = userService.update(user, id);
         return updated != null
@@ -112,7 +130,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping(value = "/users/{id}")
+    @DeleteMapping(value = "/users/usersById/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") UUID id) {
         final UserInfoDto deleted = userService.delete(id);
         return deleted != null

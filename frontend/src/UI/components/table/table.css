@@ -1,0 +1,51 @@
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%!important;
+    border: 1px solid #ddd!important;
+    border-collapse: collapse!important;
+    border-spacing: 0!important;
+    border-radius: 50px!important; /* Добавлен радиус скругления углов */
+    margin: 0 auto!important; /* Центрирование таблицы */
+}
+
+table th,
+table td {
+    text-align: left;
+    padding: 16px;
+    border: 1px solid #ddd;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tr:hover {
+    background-color: #ddd;
+}
+
+table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    font-family: "Montserrat";
+    /* Adjust the padding as needed */
+    text-align: left;
+    /* Align text to the left */
+    max-width: 100px;
+    /* Set the maximum width for the cells */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Add ellipsis for overflowing text */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+}
+
+.input-field {
+    width: 100%;
+    /* Задайте нужную ширину */
+    height: 15px;
+    /* Задайте нужную высоту */
+    border: none;
+    /* Удалите рамку */
+}

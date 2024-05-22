@@ -6,6 +6,9 @@ import org.hibernate.query.sqm.PathElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -128,5 +131,43 @@ public class Advice {
         Response response = new Response(exceptionName, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<Response> handleException(InternalAuthenticationServiceException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoUserFoundException.class)
+    public ResponseEntity<Response> handleException(NoUserFoundException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Response> handleException(BadCredentialsException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Response> handleException(UsernameNotFoundException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
 }

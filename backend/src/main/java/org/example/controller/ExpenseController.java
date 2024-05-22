@@ -37,6 +37,7 @@ public class ExpenseController {
     }
 
 
+    /*
     @GetMapping(value = "/expenses/expensesById/{id}")
     public ResponseEntity<ExpenseInfoDto> read(@PathVariable(name = "id") UUID id) {
         final ExpenseInfoDto expense = expenseService.read(id);
@@ -44,7 +45,7 @@ public class ExpenseController {
                 ? new ResponseEntity<>(expense, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
+    */
 
     @PutMapping(value = "/expenses/expensesById/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody ExpenseUpdateDto expense) {
@@ -71,4 +72,6 @@ public class ExpenseController {
                 ? new ResponseEntity<>(created, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
+
+
 }

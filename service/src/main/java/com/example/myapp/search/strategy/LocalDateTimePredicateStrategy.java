@@ -15,12 +15,12 @@ public class LocalDateTimePredicateStrategy implements PredicateStrategy<LocalDa
 
     @Override
     public Predicate getRightLimitPattern(Expression<LocalDateTime> expression, LocalDateTime value, CriteriaBuilder cb) {
-        return cb.lessThanOrEqualTo(expression, value);
+        return cb.lessThanOrEqualTo(expression.as(LocalDateTime.class), value);
     }
 
     @Override
     public Predicate getLeftLimitPattern(Expression<LocalDateTime> expression, LocalDateTime value, CriteriaBuilder cb) {
-        return cb.greaterThanOrEqualTo(expression, value);
+        return cb.greaterThanOrEqualTo(expression.as(LocalDateTime.class), value);
     }
 
     @Override

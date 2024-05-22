@@ -21,6 +21,7 @@ import com.example.myapp.search.enums.OperationType;
 import com.example.myapp.search.strategy.PredicateStrategy;
 import com.example.myapp.service.ExpenseService;
 import com.example.myapp.utils.MappingUtils;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -139,11 +141,15 @@ public class ExpenseServiceImpl implements ExpenseService {
                 switch (operationType) {
                     case EQUALS ->
                             predicate = cb.and(predicate, strategy.getEqualsPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
-                    case RIGHT_LIMIT ->
-                            predicate = cb.and(predicate, strategy.getRightLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
-                    case LEFT_LIMIT ->
-                            predicate = cb.and(predicate, strategy.getLeftLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
-                    case LIKE ->
+                    case RIGHT_LIMIT -> {
+                        Path<?> date = entity.get(criteria.getField());
+                        predicate = cb.and(predicate, strategy.getRightLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    }
+                    case LEFT_LIMIT -> {
+                        Path<?> date = entity.get(criteria.getField());
+                        predicate = cb.and(predicate, strategy.getLeftLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    }
+                            case LIKE ->
                             predicate = cb.and(predicate, strategy.getLikePattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
                 }
             }

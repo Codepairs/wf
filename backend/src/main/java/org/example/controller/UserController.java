@@ -26,12 +26,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -41,121 +44,58 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user/registration")
-    public String showRegistrationForm(WebRequest request, Model model) {
-        UserUpdateDto userDto = new UserUpdateDto();
-        model.addAttribute("user", userDto);
-        return "registration";
-    }
 
-
-
-    @PostMapping("/register")
-    public String registerUser(@RequestParam(required = true) String email,
-                               @RequestParam(required = true) String name,
-                               @RequestParam(required = true) String password,
-                               Model model) {
-        UserUpdateDto user = new UserUpdateDto();
-        user.builder().email(email).password(password).name(name).build();
-
-        // TODO validate user
-        // TODO save user to database
-        // userDao.save(user);
-
-
-        // TODO send out registration email
-        // mailService.sendRegistrationEmail(user);
-
-        model.addAttribute("user", user);
-        return "registration-success";
-        //return new ModelAndView("successRegister", "user", userDto);
-    }
-
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto user) {
-
-        final ResponseEntity<Map> token = userService.login(user);
-        System.out.println(token);
-        return token != null
-                ? new ResponseEntity<>(token, HttpStatus.OK)
+    @GetMapping(value = "/incomesById/{id}")
+    public ResponseEntity<Flux<IncomeInfoDto>> getIncomesById(@PathVariable(name = "id") UUID id) {
+        Flux<IncomeInfoDto> incomes = userService.getIncomesById(id);
+        return incomes != null 
+                ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
     }
 
-
-
-
-    /*
-    @GetMapping("/users/expensesById/{id}")
-    public ResponseEntity<List<ExpenseInfoDto>> read_expenses(@PathVariable UUID id, HttpServletRequest request) {
-        String accessToken = (String) request.getSession().getAttribute("jwtToken");
-        if (accessToken != null) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + accessToken);
-            HttpEntity<Object> entity = new HttpEntity<>(headers);
-            restTemplate.exchange("http://localhost:8080/users/expenses/" + id, HttpMethod.GET, entity, new ParameterizedTypeReference<List<ExpenseInfoDto>>(){});
-        } else {
-            // Handle unauthorized case here
-        }
-    }
-    */
-
-
-
-    @GetMapping(value = "/users/incomesById/{id}")
-    public ResponseEntity<List<IncomeInfoDto>> read_incomes(@PathVariable(name = "id") UUID id) {
-        List<IncomeInfoDto> incomes = userService.getIncomes(id);
-        return incomes != null &&  !incomes.isEmpty()
+    @GetMapping(value = "/expensesById/{id}")
+    public ResponseEntity<Flux<ExpenseInfoDto>> getExpensesById(@PathVariable(name = "id") UUID id) {
+        Flux<ExpenseInfoDto> incomes = userService.getExpensesById(id);
+        return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 
-    @GetMapping(value = "/users/usersById/{id}")
-    public ResponseEntity<UserInfoDto> read(@PathVariable(name = "id") UUID id) {
-        final UserInfoDto user = userService.read(id);
+    @GetMapping(value = "/usersById/{id}")
+    public ResponseEntity<Mono<UserInfoDto>> getUserById(@PathVariable(name = "id") UUID id) {
+        final Mono<UserInfoDto> user = userService.getUserById(id);
         return user != null
             ? new ResponseEntity<>(user, HttpStatus.OK)
             : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 
-    @PutMapping(value = "/users/usersById/{id}")
+    @PutMapping(value = "/usersById/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody UserUpdateDto user) {
-        final UserInfoDto updated = userService.update(user, id);
+        final Mono<UserInfoDto> updated = userService.updateUserById(user, id);
         return updated != null
                 ? new ResponseEntity<>(updated, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
 
-    @DeleteMapping(value = "/users/usersById/{id}")
+    @DeleteMapping(value = "/usersById/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") UUID id) {
-        final UserInfoDto deleted = userService.delete(id);
+        final Mono<Void> deleted = userService.deleteUserById(id);
         return deleted != null
                 ? new ResponseEntity<>(deleted, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
 
-    @PostMapping(value = "/users")
-    public ResponseEntity<?> create(@Valid @RequestBody UserCreateDto user) {
-        final UserInfoDto created = userService.create(user);
-        return created != null
-                ? new ResponseEntity<>(created, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
-
-    @GetMapping(value = "/users")
-    public ResponseEntity<List<UserInfoDto>> readAll() {
-        final List<UserInfoDto> users = userService.readAll();
+    @GetMapping(value = "/pagination")
+    public ResponseEntity<Flux<UserInfoDto>> getUsersPagination() {
+        final Flux<UserInfoDto> users = userService.getUsersPagination();
         return users != null
                 ? new ResponseEntity<>(users, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-
 
 
 }

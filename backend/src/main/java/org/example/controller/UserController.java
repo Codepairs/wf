@@ -1,36 +1,18 @@
 package org.example.controller;
 
-import com.example.myapp.dto.user.UserCreateDto;
-import jakarta.servlet.http.HttpSession;
-import org.example.dto.UserLoginDto;
+
+import org.example.dto.expense.ExpenseInfoDto;
+import org.example.dto.income.IncomeInfoDto;
+import org.example.dto.user.UserInfoDto;
+import org.example.dto.user.UserUpdateDto;
 import org.example.service.UserService;
-import com.example.myapp.dto.expense.ExpenseInfoDto;
-import com.example.myapp.dto.income.IncomeInfoDto;
-import com.example.myapp.dto.user.UserInfoDto;
-import com.example.myapp.dto.user.UserUpdateDto;
-
-
-import com.example.myapp.handler.exceptions.NotFoundByIdException;
-import com.example.myapp.handler.exceptions.SQLUniqueException;
-import com.example.myapp.model.Expense;
-import com.example.myapp.model.Income;
-import com.example.myapp.model.User;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -48,7 +30,7 @@ public class UserController {
     @GetMapping(value = "/incomesById/{id}")
     public ResponseEntity<Flux<IncomeInfoDto>> getIncomesById(@PathVariable(name = "id") UUID id) {
         Flux<IncomeInfoDto> incomes = userService.getIncomesById(id);
-        return incomes != null 
+        return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -66,8 +48,8 @@ public class UserController {
     public ResponseEntity<Mono<UserInfoDto>> getUserById(@PathVariable(name = "id") UUID id) {
         final Mono<UserInfoDto> user = userService.getUserById(id);
         return user != null
-            ? new ResponseEntity<>(user, HttpStatus.OK)
-            : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                ? new ResponseEntity<>(user, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 

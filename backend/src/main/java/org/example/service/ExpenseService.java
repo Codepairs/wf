@@ -1,16 +1,11 @@
 package org.example.service;
 
 
-import com.example.myapp.dto.expense.ExpenseCreateDto;
-import com.example.myapp.dto.expense.ExpenseInfoDto;
-import com.example.myapp.dto.expense.ExpenseUpdateDto;
-import com.example.myapp.dto.income.IncomeInfoDto;
-import com.example.myapp.dto.income.IncomeUpdateDto;
-import com.example.myapp.dto.user.UserCreateDto;
-import com.example.myapp.dto.user.UserInfoDto;
-import com.example.myapp.dto.user.UserSearchDto;
-import com.example.myapp.dto.user.UserUpdateDto;
+
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.dto.expense.ExpenseCreateDto;
+import org.example.dto.expense.ExpenseInfoDto;
+import org.example.dto.expense.ExpenseUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;

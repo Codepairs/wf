@@ -1,12 +1,10 @@
 package org.example.controller;
 
-import com.example.myapp.dto.expense.ExpenseCreateDto;
-import com.example.myapp.dto.expense.ExpenseInfoDto;
-import com.example.myapp.dto.expense.ExpenseUpdateDto;
-import com.example.myapp.dto.income.IncomeCreateDto;
-import com.example.myapp.dto.income.IncomeInfoDto;
-import com.example.myapp.dto.income.IncomeUpdateDto;
+
 import jakarta.validation.Valid;
+import org.example.dto.expense.ExpenseCreateDto;
+import org.example.dto.expense.ExpenseInfoDto;
+import org.example.dto.expense.ExpenseUpdateDto;
 import org.example.service.ExpenseService;
 import org.example.service.IncomeService;
 import org.springframework.beans.factory.annotation.Autowired;

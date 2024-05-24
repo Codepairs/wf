@@ -1,13 +1,12 @@
 package org.example.controller;
 
-import com.example.myapp.dto.category.CategoryCreateDto;
-import com.example.myapp.dto.category.CategoryInfoDto;
-import com.example.myapp.dto.category.CategoryUpdateDto;
-import com.example.myapp.dto.expense.ExpenseCreateDto;
-import com.example.myapp.dto.expense.ExpenseInfoDto;
-import com.example.myapp.dto.expense.ExpenseUpdateDto;
-import com.example.myapp.dto.income.IncomeInfoDto;
+
 import jakarta.validation.Valid;
+import org.example.dto.category.CategoryCreateDto;
+import org.example.dto.category.CategoryInfoDto;
+import org.example.dto.category.CategoryUpdateDto;
+import org.example.dto.expense.ExpenseInfoDto;
+import org.example.dto.income.IncomeInfoDto;
 import org.example.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

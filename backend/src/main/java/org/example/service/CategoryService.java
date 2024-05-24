@@ -1,10 +1,11 @@
 package org.example.service;
 
-import com.example.myapp.dto.category.CategoryCreateDto;
-import com.example.myapp.dto.category.CategoryInfoDto;
-import com.example.myapp.dto.category.CategoryUpdateDto;
-import com.example.myapp.dto.expense.ExpenseInfoDto;
-import com.example.myapp.dto.income.IncomeInfoDto;
+
+import org.example.dto.category.CategoryCreateDto;
+import org.example.dto.category.CategoryInfoDto;
+import org.example.dto.category.CategoryUpdateDto;
+import org.example.dto.expense.ExpenseInfoDto;
+import org.example.dto.income.IncomeInfoDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

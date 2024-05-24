@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @RestController
 public class AuthController {
@@ -32,7 +35,9 @@ public class AuthController {
     @PostMapping(value = "/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDto user) {
         System.out.println("login");
-        final String token = authService.loginUser(user);
+        Map<String, String> headerMap = authService.loginUser(user);
+        String token = headerMap.get("Authorization");
+        String userId = headerMap.get("UserId");
         return token != null
                 ? new ResponseEntity<>(token, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);

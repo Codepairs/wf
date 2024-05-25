@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class IncomeController {
-
+    /*
     private final IncomeService incomeService;
 
     @Autowired
@@ -68,7 +68,7 @@ public class IncomeController {
                 ? new ResponseEntity<>(created, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
-
+    */
 
 
 }

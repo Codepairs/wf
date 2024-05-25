@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-
+    /*
     @Autowired
     private RestTemplate restTemplate;
 
@@ -56,6 +56,6 @@ public class CategoryService {
         return restTemplate.getForObject("http://localhost:8080/category/incomesById/" + id.toString(), List.class);
     }
 
-
+    */
 
 }

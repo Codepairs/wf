@@ -18,6 +18,7 @@ import java.util.UUID;
 
 @RestController
 public class CategoryController {
+    /*
     private final CategoryService categoryService;
 
     @Autowired
@@ -85,5 +86,5 @@ public class CategoryController {
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
+    */
 }

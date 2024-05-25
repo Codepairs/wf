@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -33,13 +34,12 @@ public class AuthController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDto user) {
+    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDto user, ServerWebExchange exchange) {
         System.out.println("login");
-        Map<String, String> headerMap = authService.loginUser(user);
-        String token = headerMap.get("Authorization");
-        String userId = headerMap.get("UserId");
-        return token != null
-                ? new ResponseEntity<>(token, HttpStatus.OK)
+        Mono<Map> headerMap = authService.login(user, exchange);
+
+        return headerMap != null
+                ? new ResponseEntity<>(headerMap, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 }

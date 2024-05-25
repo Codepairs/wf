@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -71,9 +72,9 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/pagination")
-    public ResponseEntity<Flux<UserInfoDto>> getUsersPagination() {
-        final Flux<UserInfoDto> users = userService.getUsersPagination();
+    @PostMapping(value = "/pagination")
+    public ResponseEntity<Flux<UserInfoDto>> getUsersPagination(ServerWebExchange exchange) {
+        final Flux<UserInfoDto> users = userService.getUsersPagination(exchange);
         return users != null
                 ? new ResponseEntity<>(users, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

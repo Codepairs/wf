@@ -1,6 +1,6 @@
 package org.example.dto.expense;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+//import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +31,7 @@ public class ExpenseUpdateDto {
     @NotNull(message = "CategoryId cannot be null")
     private UUID categoryId;
 
-    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
+    //@JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
     @NotNull(message = "Date cannot be null")
     private LocalDateTime getDate;
 

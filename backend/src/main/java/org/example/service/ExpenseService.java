@@ -2,7 +2,6 @@ package org.example.service;
 
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.example.dto.expense.ExpenseCreateDto;
 import org.example.dto.expense.ExpenseInfoDto;
 import org.example.dto.expense.ExpenseUpdateDto;
@@ -25,7 +24,7 @@ import java.util.List;
 @Service
 public class ExpenseService {
 
-
+/*
     @Autowired
     private RestTemplate restTemplate;
 
@@ -65,6 +64,6 @@ public class ExpenseService {
             return ResponseEntity.status(401).build();
         }
     }
-
+*/
 
 }

@@ -6,8 +6,10 @@ import org.example.dto.user.UserCreateDto;
 import org.example.dto.user.UserLoginDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Mono;
@@ -23,20 +25,24 @@ public class AuthService {
 
     private final WebClient webClient;
 
-    public Map<String, String> loginUser(UserLoginDto user) {
-        ResponseEntity<?> response =  webClient.post()
+    public Mono<Map> login(@RequestBody UserLoginDto user, ServerWebExchange exchange) {
+        return webClient.post()
                 .uri("/login")
                 .body(BodyInserters.fromValue(user))
-                .retrieve() // Use retrieve() instead of exchange()
+                .retrieve()
                 .toEntity(String.class)
                 .doOnError(err -> log.error(err.getMessage()))
-                .block();
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put("Authorization", response.getHeaders().get("Authorization").get(0));
-        headersMap.put("UserId", response.getHeaders().get("UserId").get(0));
-        log.info("Token = {}", response.getHeaders().get("Authorization").get(0));
-        log.info("UserId = {}", response.getHeaders().get("UserId").get(0));
-        return headersMap;
+                .flatMap(responseEntity -> { // Используем flatMap вместо block
+                    Map headersMap = new HashMap<>();
+                    headersMap.put("Authorization", responseEntity.getHeaders().get("Authorization").get(0));
+                    headersMap.put("UserId", responseEntity.getHeaders().get("UserId").get(0));
+
+                    log.info(headersMap.toString());
+
+                    exchange.getAttributes().put("Authorization", headersMap.get("Authorization"));
+                    exchange.getAttributes().put("UserId", headersMap.get("UserId"));
+                    return Mono.just(headersMap);
+                });
     }
 
 
@@ -49,6 +55,4 @@ public class AuthService {
                 .block();
         return true;
     }
-
-
 }

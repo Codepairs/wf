@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class IncomeService {
 
-
+    /*
     @Autowired
     private RestTemplate restTemplate;
 
@@ -49,6 +49,6 @@ public class IncomeService {
     public IncomeInfoDto read(UUID id) {
         return restTemplate.getForObject("http://localhost:8080/incomes/incomesById/" + id.toString(), IncomeInfoDto.class);
     }
-
+    */
 
 }

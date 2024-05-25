@@ -1,6 +1,7 @@
 package org.example.service;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.expense.ExpenseInfoDto;
 import org.example.dto.income.IncomeInfoDto;
 import org.example.dto.user.UserInfoDto;
@@ -9,12 +10,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class UserService {
     private final WebClient webClient;
 
@@ -22,15 +25,24 @@ public class UserService {
         this.webClient = webClient;
     }
 
+
+
+    public Flux<UserInfoDto> getUsersPagination(ServerWebExchange exchange) {
+        String token = ( String )exchange.getAttributes().getOrDefault("Authorization", "");
+        log.info(token);
+        System.out.println("token" + token);
+
+        return this.webClient.post()
+                        .uri("/users/pagination")
+                        .body(Mono.empty(), String.class)
+                        .header("Authorization",  token)
+                        .retrieve()
+                        .bodyToFlux(UserInfoDto.class);
+    }
+
     //TODO add filters
     public Flux<UserInfoDto> getUsersFilter() {
         return this.webClient.get().uri("/users/getByFilter")
-                .retrieve()
-                .bodyToFlux(UserInfoDto.class);
-    }
-
-    public Flux<UserInfoDto> getUsersPagination() {
-        return this.webClient.get().uri("/users/pagination")
                 .retrieve()
                 .bodyToFlux(UserInfoDto.class);
     }

@@ -39,8 +39,10 @@ public class AuthService {
 
                     log.info(headersMap.toString());
 
-                    exchange.getAttributes().put("Authorization", headersMap.get("Authorization"));
-                    exchange.getAttributes().put("UserId", headersMap.get("UserId"));
+                    exchange.getResponse().getHeaders().add("Authorization", (String) headersMap.get("Authorization"));
+                    exchange.getResponse().getHeaders().add("UserId", (String) headersMap.get("UserId"));
+
+                    log.info("Headers added to exchange: {}", exchange.getResponse().getHeaders());
                     return Mono.just(headersMap);
                 });
     }

@@ -28,9 +28,8 @@ public class UserService {
 
 
     public Flux<UserInfoDto> getUsersPagination(ServerWebExchange exchange) {
-        String token = ( String )exchange.getAttributes().getOrDefault("Authorization", "");
-        log.info(token);
-        System.out.println("token" + token);
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        log.info("token " + token);
 
         return this.webClient.post()
                         .uri("/users/pagination")

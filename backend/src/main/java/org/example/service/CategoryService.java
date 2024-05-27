@@ -38,6 +38,7 @@ public class CategoryService {
     private final UserService userService;
 
     public Flux<CategoryInfoDto> getCategoriesPagination(ServerWebExchange exchange) {
+
         String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         String userId = exchange.getRequest().getHeaders().getFirst("UserId");
         log.info("category token " + token);
@@ -118,8 +119,8 @@ public class CategoryService {
         String userId = exchange.getRequest().getHeaders().getFirst("UserId");
         log.info("best token" + token);
         log.info("best id " + userId);
-        Flux<ExpenseInfoDto> allExpenses = userService.getExpensesInLastMonth(exchange).doOnNext(data -> System.out.println("Получены данные: " + data));
-        Flux<IncomeInfoDto> allIncomes = userService.getIncomesInLastMonth(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
+        Flux<ExpenseInfoDto> allExpenses = userService.getExpensesById(exchange).doOnNext(data -> System.out.println("Получены данные: " + data));
+        Flux<IncomeInfoDto> allIncomes = userService.getIncomesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
         Mono<List<Map<String, Double>>> groupedExpenses = allExpenses
                 .groupBy(ExpenseInfoDto::getCategory)
                 .flatMap(group -> group.reduce(0.0, (acc, expense) -> acc + expense.getValue())

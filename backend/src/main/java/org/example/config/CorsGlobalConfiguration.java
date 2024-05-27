@@ -22,7 +22,8 @@ public class CorsGlobalConfiguration implements WebFluxConfigurer {
                     "Accept",
                     "Accept-Encoding",
                     "Accept-Language",
-                    "Authorization")
+                    "Authorization",
+                        "UserId")
                 .maxAge(3600);
     }
 }

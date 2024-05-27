@@ -6,16 +6,21 @@ import org.example.dto.expense.ExpenseInfoDto;
 import org.example.dto.income.IncomeInfoDto;
 import org.example.dto.user.UserInfoDto;
 import org.example.dto.user.UserUpdateDto;
+import org.example.service.filter.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -68,6 +73,96 @@ public class UserService {
                 .bodyToFlux(ExpenseInfoDto.class);
     }
 
+    public Flux<ExpenseInfoDto> getExpensesInLastMonth(ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        Filter firstFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation("<=")
+                .build();
+        Filter secondFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation(">=")
+                .build();
+        List<Filter> totalFilter = List.of(firstFilter, secondFilter);
+        log.info(totalFilter.toString());
+        return this.webClient.post().uri("/users/expensesByIdAndFilter?id={id}", userId)
+                .body(BodyInserters.fromValue(totalFilter))
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToFlux(ExpenseInfoDto.class);
+    }
+
+    public Flux<ExpenseInfoDto> getExpensesInLastThreeDays(ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        Filter firstFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation("<=")
+                .build();
+        Filter secondFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().minusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation(">=")
+                .build();
+        List<Filter> totalFilter = List.of(firstFilter, secondFilter);
+        log.info(totalFilter.toString());
+        return this.webClient.post().uri("/users/expensesByIdAndFilter?id={id}", userId)
+                .body(BodyInserters.fromValue(totalFilter))
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToFlux(ExpenseInfoDto.class);
+    }
+
+
+    public Flux<IncomeInfoDto> getIncomesInLastMonth(ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        Filter firstFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation("<=")
+                .build();
+        Filter secondFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation(">=")
+                .build();
+        List<Filter> totalFilter = List.of(firstFilter, secondFilter);
+        log.info(totalFilter.toString());
+        return this.webClient.post().uri("/users/incomesByIdAndFilter?id={id}", userId)
+                .body(BodyInserters.fromValue(totalFilter))
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToFlux(IncomeInfoDto.class);
+    }
+
+    public Flux<IncomeInfoDto> getIncomesInLastThreeDays(ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        Filter firstFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation("<=")
+                .build();
+        Filter secondFilter = Filter.builder()
+                .field("getDate")
+                .value(LocalDateTime.now().minusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                .Operation(">=")
+                .build();
+        List<Filter> totalFilter = List.of(firstFilter, secondFilter);
+        log.info(totalFilter.toString());
+        return this.webClient.post().uri("/users/incomesByIdAndFilter?id={id}", userId)
+                .body(BodyInserters.fromValue(totalFilter))
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToFlux(IncomeInfoDto.class);
+    }
+
+
     public Mono<UserInfoDto> getUserById(UUID id, ServerWebExchange exchange) {
         String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         String userId = exchange.getRequest().getHeaders().getFirst("UserId");
@@ -90,5 +185,52 @@ public class UserService {
         return this.webClient.delete().uri("/users/usersById/{id}")
                 .retrieve()
                 .bodyToMono(Void.class);
+    }
+
+    public Mono<List<Map.Entry<String, Double>>> getBestCategories(ServerWebExchange exchange) throws InterruptedException {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("best token" + token);
+        log.info("best id " + userId);
+        Flux<ExpenseInfoDto> allExpenses = this.getExpensesById(exchange).doOnNext(data -> System.out.println("Получены данные: " + data));
+        Flux<IncomeInfoDto> allIncomes = this.getIncomesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
+
+        Mono<List<Map<String, Double>>> groupedExpenses = allExpenses
+                .groupBy(ExpenseInfoDto::getCategory)
+                .flatMap(group -> group.reduce(0.0, (acc, expense) -> acc + expense.getValue())
+                        .map(sum -> Map.of(group.key().getName(), sum)))
+                .collectList();
+
+        Mono<List<Map<String, Double>>> groupedIncomes = allIncomes
+                .groupBy(IncomeInfoDto::getCategory)
+                .flatMap(group -> group.reduce(0.0, (acc, income) -> acc + income.getValue())
+                        .map(sum -> Map.of(group.key().getName(), sum)))
+                .collectList();
+
+
+        // Ожидать завершения группировки расходов и доходов
+        Mono<Map<String, Double>> allCategories = Mono.when(groupedExpenses, groupedIncomes)
+                .then(Mono.zip(groupedExpenses, groupedIncomes, (expenses, incomes) -> {
+                    Map<String, Double> merged = new HashMap<>();
+                    expenses.stream().flatMap(map -> map.entrySet().stream()).forEach(entry -> merged.merge(entry.getKey(), entry.getValue(), Double::sum));
+                    incomes.stream().flatMap(map -> map.entrySet().stream()).forEach(entry -> merged.merge(entry.getKey(), entry.getValue(), Double::sum));
+
+                    return merged;
+                }));
+
+        log.info("allCategories " + allCategories.toString());
+
+        Mono<List<Map.Entry<String, Double>>> top3Categories = allCategories
+                .map(merged -> merged.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(3)
+                        .collect(Collectors.toList()))
+                .doOnNext(top3 -> top3.forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue())));
+
+// Subscribe to the Mono to process the top 3 categories
+        top3Categories.subscribe();
+
+        // Отсортировать категории по сумме в порядке убывания
+        return top3Categories;
     }
 }

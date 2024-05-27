@@ -44,6 +44,38 @@ public class UserController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @PostMapping(value = "/expensesInLastMonth")
+    public ResponseEntity<Flux<ExpenseInfoDto>> getExpensesInLastMonth(ServerWebExchange exchange) {
+        Flux<ExpenseInfoDto> expenses = userService.getExpensesInLastMonth(exchange);
+        return expenses != null
+                ? new ResponseEntity<>(expenses, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping(value = "/incomesInLastMonth")
+    public ResponseEntity<Flux<IncomeInfoDto>> getIncomesInLastMonth(ServerWebExchange exchange) {
+        Flux<IncomeInfoDto> expenses = userService.getIncomesInLastMonth(exchange);
+        return expenses != null
+                ? new ResponseEntity<>(expenses, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+    @PostMapping(value = "/incomesInLastThreeDays")
+    public ResponseEntity<Flux<IncomeInfoDto>> getIncomesInLastThreeDays(ServerWebExchange exchange) {
+        Flux<IncomeInfoDto> incomes = userService.getIncomesInLastThreeDays(exchange);
+        return incomes != null
+                ? new ResponseEntity<>(incomes, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping(value = "/expensesInLastThreeDays")
+    public ResponseEntity<Flux<ExpenseInfoDto>> getExpensesInLastThreeDays(ServerWebExchange exchange) {
+        Flux<ExpenseInfoDto> expenses = userService.getExpensesInLastThreeDays(exchange);
+        return expenses != null
+                ? new ResponseEntity<>(expenses, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     @GetMapping(value = "/usersById/{id}")
     public ResponseEntity<Mono<UserInfoDto>> getUserById(@PathVariable(name = "id") UUID id, ServerWebExchange exchange) {

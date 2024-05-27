@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 public class ExpenseController {
-/*
+
     private final ExpenseService expenseService;
 
     @Autowired
@@ -25,17 +25,17 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-
-    @GetMapping(value = "/expenses")
-    public ResponseEntity<List<ExpenseInfoDto>> readAll() {
-        List<ExpenseInfoDto> expenses = expenseService.readAll();
+/*
+    @GetMapping(value = "/expenses/pagination")
+    public ResponseEntity<Flux<ExpenseInfoDto>> readAll() {
+        Flux<ExpenseInfoDto> expenses = expenseService.getExpensesPagination();
         return expenses != null &&  !expenses.isEmpty()
                 ? new ResponseEntity<>(expenses, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 
-    /*
+
     @GetMapping(value = "/expenses/expensesById/{id}")
     public ResponseEntity<ExpenseInfoDto> read(@PathVariable(name = "id") UUID id) {
         final ExpenseInfoDto expense = expenseService.read(id);

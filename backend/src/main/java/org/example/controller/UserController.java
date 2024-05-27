@@ -14,7 +14,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/users")
@@ -28,17 +31,17 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/incomesById/{id}")
-    public ResponseEntity<Flux<IncomeInfoDto>> getIncomesById(@PathVariable(name = "id") UUID id) {
-        Flux<IncomeInfoDto> incomes = userService.getIncomesById(id);
+    @GetMapping(value = "/incomesById/?id={id}")
+    public ResponseEntity<List<IncomeInfoDto>> getIncomesById(ServerWebExchange exchange) throws ExecutionException, InterruptedException {
+        List<IncomeInfoDto> incomes = userService.getIncomesById(exchange).get();
         return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/expensesById/{id}")
-    public ResponseEntity<Flux<ExpenseInfoDto>> getExpensesById(@PathVariable(name = "id") UUID id) {
-        Flux<ExpenseInfoDto> incomes = userService.getExpensesById(id);
+    public ResponseEntity<List<ExpenseInfoDto>> getExpensesById(ServerWebExchange exchange) throws ExecutionException, InterruptedException {
+        List<ExpenseInfoDto> incomes = userService.getExpensesById(exchange).get();
         return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -46,8 +49,8 @@ public class UserController {
 
 
     @GetMapping(value = "/usersById/{id}")
-    public ResponseEntity<Mono<UserInfoDto>> getUserById(@PathVariable(name = "id") UUID id) {
-        final Mono<UserInfoDto> user = userService.getUserById(id);
+    public ResponseEntity<Mono<UserInfoDto>> getUserById(@PathVariable(name = "id") UUID id, ServerWebExchange exchange) {
+        final Mono<UserInfoDto> user = userService.getUserById(id, exchange);
         return user != null
                 ? new ResponseEntity<>(user, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

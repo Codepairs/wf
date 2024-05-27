@@ -10,13 +10,17 @@ import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.UUID;
 
+@RestController
 public class IncomeController {
-    /*
+
     private final IncomeService incomeService;
 
     @Autowired
@@ -25,15 +29,15 @@ public class IncomeController {
     }
 
 
-    @GetMapping(value = "/incomes")
-    public ResponseEntity<List<IncomeInfoDto>> readAll() {
-        List<IncomeInfoDto> incomes = incomeService.readAll();
-        return incomes != null &&  !incomes.isEmpty()
+    @PostMapping(value = "/incomes/pagination")
+    public ResponseEntity<Flux<IncomeInfoDto>> getIncomesPagination(ServerWebExchange exchange) {
+        Flux<IncomeInfoDto> incomes = incomeService.getIncomesPagination(exchange);
+        return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
+    /*
     @GetMapping(value = "/incomes/incomesById/{id}")
     public ResponseEntity<IncomeInfoDto> read(@PathVariable(name = "id") UUID id) {
         final IncomeInfoDto income = incomeService.read(id);

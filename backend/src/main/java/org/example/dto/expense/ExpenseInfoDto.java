@@ -2,14 +2,12 @@ package org.example.dto.expense;
 
 
 //import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.dto.category.CategoryInfoDto;
 import org.example.dto.user.UserInfoDto;
 
@@ -22,6 +20,8 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class ExpenseInfoDto {
 
     private UUID id;
@@ -33,7 +33,7 @@ public class ExpenseInfoDto {
     @NotNull(message = "Value cannot be null")
     private BigDecimal value;
 
-    //@JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
+    @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
     private LocalDateTime getDate;
 
     @Valid
@@ -41,4 +41,10 @@ public class ExpenseInfoDto {
 
     @Valid
     private CategoryInfoDto category;
+
+
+    public Double getValue(){
+        return value.doubleValue();
+    }
+
 }

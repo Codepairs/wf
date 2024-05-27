@@ -14,10 +14,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/users")
@@ -31,17 +28,17 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/incomesById/?id={id}")
-    public ResponseEntity<List<IncomeInfoDto>> getIncomesById(ServerWebExchange exchange) throws ExecutionException, InterruptedException {
-        List<IncomeInfoDto> incomes = userService.getIncomesById(exchange).get();
+    @GetMapping(value = "/incomesById?id={id}")
+    public ResponseEntity<Flux<IncomeInfoDto>> getIncomesById(ServerWebExchange exchange) {
+        Flux<IncomeInfoDto> incomes = userService.getIncomesById(exchange);
         return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(value = "/expensesById/{id}")
-    public ResponseEntity<List<ExpenseInfoDto>> getExpensesById(ServerWebExchange exchange) throws ExecutionException, InterruptedException {
-        List<ExpenseInfoDto> incomes = userService.getExpensesById(exchange).get();
+    @GetMapping(value = "/expensesById?id={id}")
+    public ResponseEntity<Flux<ExpenseInfoDto>> getExpensesById(ServerWebExchange exchange) {
+        Flux<ExpenseInfoDto> incomes = userService.getExpensesById(exchange);
         return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

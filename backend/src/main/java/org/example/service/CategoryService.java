@@ -26,8 +26,9 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -112,40 +113,69 @@ public class CategoryService {
     }
 
 
-    public Map<String, Double> getBestCategories(ServerWebExchange exchange) throws ExecutionException, InterruptedException {
+    public Mono<Map<String, Double>> getBestCategories(ServerWebExchange exchange) throws InterruptedException {
         String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         String userId = exchange.getRequest().getHeaders().getFirst("UserId");
         log.info("best token" + token);
         log.info("best id " + userId);
+        Flux<ExpenseInfoDto> allExpenses = userService.getExpensesById(exchange).doOnNext(data -> System.out.println("Получены данные: " + data));
+        Flux<IncomeInfoDto> allIncomes = userService.getIncomesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
+        Mono<List<Map<String, Double>>> groupedExpenses = allExpenses
+                .groupBy(ExpenseInfoDto::getCategory)
+                .flatMap(group -> group.reduce(0.0, (acc, expense) -> acc + expense.getValue())
+                        .map(sum -> Map.of(group.key().getName(), sum)))
+                .collectList();
+
+        Mono<List<Map<String, Double>>> groupedIncomes = allIncomes
+                .groupBy(IncomeInfoDto::getCategory)
+                .flatMap(group -> group.reduce(0.0, (acc, income) -> acc + income.getValue())
+                        .map(sum -> Map.of(group.key().getName(), sum)))
+                .collectList();
 
 
-        List<ExpenseInfoDto> allExpenses = userService.getExpensesById(exchange).get();
+        // Ожидать завершения группировки расходов и доходов
+        Mono<Map<String, Double>> allCategories = Mono.when(groupedExpenses, groupedIncomes)
+                .then(Mono.zip(groupedExpenses, groupedIncomes, (expenses, incomes) -> {
+                    Map<String, Double> merged = new HashMap<>();
+                    expenses.stream().flatMap(map -> map.entrySet().stream()).forEach(entry -> merged.merge(entry.getKey(), entry.getValue(), Double::sum));
+                    incomes.stream().flatMap(map -> map.entrySet().stream()).forEach(entry -> merged.merge(entry.getKey(), entry.getValue(), Double::sum));
 
-        List<IncomeInfoDto> allIncomes = userService.getIncomesById(exchange).get();
-        log.info("all incomes " + allIncomes);
-        log.info("all expenses " + allExpenses);
+                    return merged;
+                }));
 
+        log.info("allCategories " + allCategories.toString());
+
+        // Отсортировать категории по сумме в порядке убывания
+        return allCategories;
+    }
+
+
+
+
+        // Calculate total expenses per category (as Mono)
         /*
-        Mono<Map<String, Double>> totalExpensesByCategory = allExpenses
+        Flux<Map.Entry<String, Double>> totalExpensesByCategory = allExpenses
                 .collectList()
                 .map(expenses -> expenses.stream()
                         .collect(Collectors.groupingBy(e -> e.getCategory().getName(),
-                                Collectors.summingDouble(ExpenseInfoDto::getValue))));
+                                Collectors.summingDouble(ExpenseInfoDto::getValue))))
+                .flatMapMany(map -> Flux.fromIterable(map.entrySet())); // Convert Mono<Map> to Flux<Map.Entry>
 
-// Calculate total incomes per category
-        Mono<Map<String, Double>> totalIncomesByCategory = allIncomes
+        // Calculate total incomes per category (as Flux)
+        Flux<Map.Entry<String, Double>> totalIncomesByCategory = allIncomes
                 .collectList()
                 .map(incomes -> incomes.stream()
                         .collect(Collectors.groupingBy(i -> i.getCategory().getName(),
-                                Collectors.summingDouble(IncomeInfoDto::getValue))));
+                                Collectors.summingDouble(IncomeInfoDto::getValue))))
+                .flatMapMany(map -> Flux.fromIterable(map.entrySet()));
 
-        Map<String, Double> combinedCategoryAmounts = new HashMap<>();
 
-        log.info("total incomes: " + totalIncomesByCategory.flatMap(res -> totalIncomesByCategory).block());
-        log.info("total expenses: " + totalExpensesByCategory.flatMap(res -> totalExpensesByCategory).block());
-        */
+        log.info("incomes " + totalIncomesByCategory.collectList().toString());
+        // Combine expenses and incomes using flatMap
+        return totalExpensesByCategory;
 
-        return null;
+         */
+
     }
 
-}
+

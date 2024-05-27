@@ -113,7 +113,7 @@ public class CategoryService {
     }
 
 
-    public Mono<Map<String, Double>> getBestCategories(ServerWebExchange exchange) throws InterruptedException {
+    public Mono<List<Map.Entry<String, Double>>> getBestCategories(ServerWebExchange exchange) throws InterruptedException {
         String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         String userId = exchange.getRequest().getHeaders().getFirst("UserId");
         log.info("best token" + token);
@@ -145,8 +145,18 @@ public class CategoryService {
 
         log.info("allCategories " + allCategories.toString());
 
+        Mono<List<Map.Entry<String, Double>>> top3Categories = allCategories
+                .map(merged -> merged.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(3)
+                        .collect(Collectors.toList()))
+                .doOnNext(top3 -> top3.forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue())));
+
+// Subscribe to the Mono to process the top 3 categories
+        top3Categories.subscribe();
+
         // Отсортировать категории по сумме в порядке убывания
-        return allCategories;
+        return top3Categories;
     }
 
 

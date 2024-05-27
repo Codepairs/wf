@@ -91,8 +91,8 @@ public class CategoryController {
     }
 
     @GetMapping(value = "/categories/getBestCategories")
-    public ResponseEntity<Mono<Map<String, Double>>> getBestCategories(ServerWebExchange exchange) throws ExecutionException, InterruptedException {
-        Mono<Map<String, Double>> bestCategories = categoryService.getBestCategories(exchange);
+    public ResponseEntity<Mono<List<Map.Entry<String, Double>>>> getBestCategories(ServerWebExchange exchange) throws ExecutionException, InterruptedException {
+        Mono<List<Map.Entry<String, Double>>> bestCategories = categoryService.getBestCategories(exchange);
         return bestCategories != null
                 ? new ResponseEntity<>(bestCategories, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

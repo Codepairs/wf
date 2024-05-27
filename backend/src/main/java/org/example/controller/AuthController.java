@@ -26,8 +26,8 @@ public class AuthController {
 
 
     @PostMapping(value = "/registration")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserCreateDto user) {
-        Boolean created = authService.registerUser(user);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserCreateDto user, ServerWebExchange exchange) {
+        Mono<Map> created = authService.registerUser(user, exchange);
         return created != null
                 ? new ResponseEntity<>(created, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);

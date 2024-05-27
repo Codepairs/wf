@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,10 +38,10 @@ public class IncomeController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    /*
+
     @GetMapping(value = "/incomes/incomesById/{id}")
-    public ResponseEntity<IncomeInfoDto> read(@PathVariable(name = "id") UUID id) {
-        final IncomeInfoDto income = incomeService.read(id);
+    public ResponseEntity<Mono<IncomeInfoDto>> read(@PathVariable(name = "id") UUID id, ServerWebExchange exchange) {
+        final Mono<IncomeInfoDto> income = incomeService.read(id, exchange);
         return income != null
                 ? new ResponseEntity<>(income, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -48,8 +49,8 @@ public class IncomeController {
 
 
     @PutMapping(value = "/incomes/incomesById/{id}")
-    public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody IncomeUpdateDto income) {
-        final IncomeInfoDto updated = incomeService.update(income, id);
+    public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody IncomeUpdateDto income, ServerWebExchange exchange) {
+        final Mono<IncomeInfoDto> updated = incomeService.update(income, id, exchange);
         return updated != null
                 ? new ResponseEntity<>(updated, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
@@ -66,13 +67,13 @@ public class IncomeController {
 
 
     @PostMapping(value = "/incomes")
-    public ResponseEntity<?> create(@Valid @RequestBody IncomeCreateDto income) {
-        final IncomeInfoDto created = incomeService.create(income);
+    public ResponseEntity<?> create(@Valid @RequestBody IncomeCreateDto income, ServerWebExchange exchange) {
+        final Mono<IncomeInfoDto> created = incomeService.create(income, exchange);
         return created != null
                 ? new ResponseEntity<>(created, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
-    */
+
 
 
 }

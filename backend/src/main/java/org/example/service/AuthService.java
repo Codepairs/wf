@@ -48,13 +48,25 @@ public class AuthService {
     }
 
 
-    public Boolean registerUser(UserCreateDto user) {
-        webClient.post()
+    public Mono<Map> registerUser(@RequestBody UserCreateDto user, ServerWebExchange exchange) {
+        return webClient.post()
                 .uri("/register")
                 .body(BodyInserters.fromValue(user))
                 .retrieve()
-                .bodyToMono(String.class)
-                .block();
-        return true;
+                .toEntity(String.class)
+                .doOnError(err -> log.error(err.getMessage()))
+                .flatMap(responseEntity -> { // Используем flatMap вместо block
+                    Map headersMap = new HashMap<>();
+                    headersMap.put("Authorization", responseEntity.getHeaders().get("Authorization").get(0));
+                    headersMap.put("UserId", responseEntity.getHeaders().get("UserId").get(0));
+
+                    log.info(headersMap.toString());
+
+                    exchange.getResponse().getHeaders().add("Authorization", (String) headersMap.get("Authorization"));
+                    exchange.getResponse().getHeaders().add("UserId", (String) headersMap.get("UserId"));
+
+                    log.info("Headers added to exchange: {}", exchange.getResponse().getHeaders());
+                    return Mono.just(headersMap);
+                });
     }
 }

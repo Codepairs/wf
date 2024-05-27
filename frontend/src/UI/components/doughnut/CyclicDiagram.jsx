@@ -5,7 +5,7 @@ import { Doughnut } from 'react-chartjs-2';
 ChartJS.register(ArcElement, Tooltip, Legend);
 const fetchData = async () => {
   try {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users?_limit=4`); // Заменить на реальный URL сервера
+    const response = await fetch(`http://localhost:8082/categories/getBestCategories`); // Заменить на реальный URL сервера
     const data = await response.json();
     return data;
   } catch (error) {

@@ -42,7 +42,7 @@ const LoginLight = () => {
         // Проверка значений только если они были введены
         if (username && password) {
             try {
-                const response = await axios.post('https://postman-echo.com/post', {
+                const response = await axios.post('http://localhost:8082/login', {
                     username,
                     password
                 });

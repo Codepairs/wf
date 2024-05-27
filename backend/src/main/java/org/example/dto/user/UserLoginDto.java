@@ -14,13 +14,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserLoginDto {
 
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String password;
+
     @Size(min = 3, message = "Name must be at least 3 characters long")
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
 
-    @NotBlank(message = "Password cannot be empty")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
-    private String password;
+
 
 }

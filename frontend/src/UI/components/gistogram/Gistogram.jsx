@@ -20,7 +20,7 @@ ChartJS.register(
 const userInfo = JSON.parse(localStorage.getItem('userInfo'))
 const userId = userInfo ? userInfo.map(userInfo => userInfo.id) : null;
 const response = await fetch(
-  'https://jsonplaceholder.typicode.com/users');
+  'https://jsonplaceholder.typicode.com/users/${userId}/data');
 const fetchData = async () => {
   try {
     const response = await fetch(`https://jsonplaceholder.typicode.com/users?_limit=6`); // Заменить на реальный URL сервера

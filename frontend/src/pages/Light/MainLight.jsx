@@ -1,6 +1,6 @@
 import React, { useContext, useState, Suspense, startTranslation } from "react";
 import { AuthContext } from "../../context";
-import style from "../../styles/Light/Login.module.css"
+import style from "../../styles/Light/Main.module.css"
 import MyButton from "../../UI/components/button/MyButton";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 import Gistogram from "../../UI/components/gistogram/Gistogram.jsx";
 import CyclicDiagram from "../../UI/components/doughnut/CyclicDiagram.jsx";
 import MyTable from "../../UI/components/table/Table.jsx";
-import { FaBell } from 'react-icons/fa'; 
+import { FaBell } from 'react-icons/fa';
 import { FaCog } from 'react-icons/fa';
 
 const MainLight = () => {

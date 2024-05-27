@@ -54,18 +54,18 @@ a {
     flex-direction: row;
 }
 .Gistograms {
-    width: 800px!important;
+    width: 800px;
     height: 50%!important;
 }
 .FirstDought {
     margin-left: 5%;
-    width: 265px!important;
+    width: 265px;
     margin-top: 5%;
     height: 50%!important;
 }
 .SecondDought {
     margin-left: 5%;
-    width: 265px!important;
+    width: 265px;
     margin-top: 5%;
     height: 50%!important;
 }

@@ -64,7 +64,7 @@ public class IncomeController {
 
 
     @PostMapping(value = "/incomes")
-    public ResponseEntity<Mono<UUID>> createIncome(@Valid @RequestBody IncomeCreateDto income, ServerWebExchange exchange) {
+    public ResponseEntity<Mono<UUID>> createIncome(@RequestBody IncomeCreateDto income, ServerWebExchange exchange) {
         log.info("create income " + income);
         final Mono<UUID> created = incomeService.createIncome(income, exchange);
         return created != null

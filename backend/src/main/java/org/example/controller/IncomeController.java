@@ -2,32 +2,29 @@ package org.example.controller;
 
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.income.IncomeCreateDto;
 import org.example.dto.income.IncomeInfoDto;
 import org.example.dto.income.IncomeUpdateDto;
 import org.example.service.IncomeService;
-import org.example.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@Slf4j
+@RequiredArgsConstructor
 public class IncomeController {
 
     private final IncomeService incomeService;
-
-    @Autowired
-    public IncomeController(IncomeService incomeService) {
-        this.incomeService = incomeService;
-    }
 
 
     @PostMapping(value = "/incomes/pagination")
@@ -67,13 +64,21 @@ public class IncomeController {
 
 
     @PostMapping(value = "/incomes")
-    public ResponseEntity<?> create(@Valid @RequestBody IncomeCreateDto income, ServerWebExchange exchange) {
-        final Mono<IncomeInfoDto> created = incomeService.create(income, exchange);
+    public ResponseEntity<Mono<UUID>> createIncome(@Valid @RequestBody IncomeCreateDto income, ServerWebExchange exchange) {
+        log.info("create income " + income);
+        final Mono<UUID> created = incomeService.createIncome(income, exchange);
         return created != null
                 ? new ResponseEntity<>(created, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
 
-
+    @GetMapping(value = "/incomes/incomesByMonths")
+    public ResponseEntity<Mono<List<Map<String, Double>>>> getIncomesByMonths(ServerWebExchange exchange) throws InterruptedException {
+        log.info("incomes by months ");
+        final Mono<List<Map<String, Double>>> created = incomeService.getIncomesByMonths(exchange);
+        return created != null
+                ? new ResponseEntity<>(created, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
 }

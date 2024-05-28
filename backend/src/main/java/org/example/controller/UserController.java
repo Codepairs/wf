@@ -1,6 +1,7 @@
 package org.example.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.expense.ExpenseInfoDto;
 import org.example.dto.income.IncomeInfoDto;
 import org.example.dto.user.UserInfoDto;
@@ -14,9 +15,12 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@Slf4j
 @RequestMapping("/users")
 public class UserController {
 
@@ -77,7 +81,7 @@ public class UserController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(value = "/usersById/{id}")
+    @GetMapping(value = "/usersById?id={id}")
     public ResponseEntity<Mono<UserInfoDto>> getUserById(@PathVariable(name = "id") UUID id, ServerWebExchange exchange) {
         final Mono<UserInfoDto> user = userService.getUserById(id, exchange);
         return user != null
@@ -86,7 +90,7 @@ public class UserController {
     }
 
 
-    @PutMapping(value = "/usersById/{id}")
+    @PutMapping(value = "/usersById?id={id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") UUID id, @RequestBody UserUpdateDto user) {
         final Mono<UserInfoDto> updated = userService.updateUserById(user, id);
         return updated != null
@@ -95,7 +99,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping(value = "/usersById/{id}")
+    @DeleteMapping(value = "/usersById?id={id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") UUID id) {
         final Mono<Void> deleted = userService.deleteUserById(id);
         return deleted != null
@@ -111,6 +115,17 @@ public class UserController {
                 ? new ResponseEntity<>(users, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+
+    @GetMapping(value = "/transactionsByMonths")
+    public ResponseEntity<Mono<List<Map<String, Double>>>> getTransactionsByMonths(ServerWebExchange exchange) throws InterruptedException {
+        log.info("transactions by months ");
+        final Mono<List<Map<String, Double>>> created = userService.getTransactionsByMonths(exchange);
+        return created != null
+                ? new ResponseEntity<>(created, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
 
 
 }

@@ -1,6 +1,7 @@
 package org.example.service;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.expense.ExpenseInfoDto;
 import org.example.dto.income.IncomeInfoDto;
@@ -24,23 +25,19 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
     private final WebClient webClient;
-
-    public UserService(WebClient webClient) {
-        this.webClient = webClient;
-    }
-
-
 
     public Flux<UserInfoDto> getUsersPagination(ServerWebExchange exchange) {
         String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         String userId = exchange.getRequest().getHeaders().getFirst("UserId");
         log.info("token " + token);
+        Map<String, String> category = new HashMap<>();
 
         return this.webClient.post()
                         .uri("/users/pagination")
-                        .bodyValue("")
+                        .body(BodyInserters.fromValue(category))
                         .header("Authorization",  token)
                         .retrieve()
                         .bodyToFlux(UserInfoDto.class);
@@ -232,5 +229,74 @@ public class UserService {
 
         // Отсортировать категории по сумме в порядке убывания
         return top3Categories;
+    }
+
+    public Mono<List<Map<String, Double>>> getTransactionsByMonths(ServerWebExchange exchange) throws InterruptedException {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("months token" + token);
+        log.info("months id " + userId);
+
+        Flux<IncomeInfoDto> allIncomes = this.getIncomesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
+
+        Mono<List<Map<String, Double>>> groupedIncomesByMonths = allIncomes
+                .groupBy(income -> {
+                    // Extract month from date string
+                    return income.getGetDate().getMonthValue();
+                })
+                .flatMap(group -> group.reduce(0.0, (acc, income) -> acc + income.getValue())
+                        .map(sum -> Map.of(group.key().toString(), sum)))
+                .collectList();
+
+        // Subscribe to process the data (optional)
+        groupedIncomesByMonths.subscribe();
+
+
+        Flux<ExpenseInfoDto> allExpenses = this.getExpensesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
+
+
+        Mono<List<Map<String, Double>>> groupedExpensesByMonths = allExpenses
+                .groupBy(expense -> {
+                    // Extract month from date string
+                    return expense.getGetDate().getMonthValue();
+                })
+                .flatMap(group -> group.reduce(0.0, (acc, expense) -> acc + expense.getValue())
+                        .map(sum -> Map.of(group.key().toString(), sum)))
+                .collectList();
+
+        // Subscribe to process the data (optional)
+        groupedExpensesByMonths.subscribe();
+
+
+        return Mono.zip(groupedIncomesByMonths, groupedExpensesByMonths)
+                .map(tuple -> {
+                    List<Map<String, Double>> incomes = tuple.getT1();
+                    List<Map<String, Double>> expenses = tuple.getT2();
+
+                    // Create a combined list
+                    List<Map<String, Double>> combined = new ArrayList<>();
+
+                    // Iterate through incomes
+                    for (Map<String, Double> incomeMap : incomes) {
+                        // Get the month number from the income map
+                        String monthNumber = incomeMap.keySet().iterator().next();
+
+                        // Find the corresponding expense map
+                        Map<String, Double> expenseMap = expenses.stream()
+                                .filter(map -> map.keySet().iterator().next().equals(monthNumber))
+                                .findFirst()
+                                .orElse(Map.of(monthNumber, 0.0));
+
+                        // Create a combined map with incomes and expenses
+                        Map<String, Double> combinedMap = new HashMap<>();
+                        combinedMap.putAll(incomeMap);
+                        combinedMap.putAll(expenseMap);
+                        log.info("combinedMap " + combinedMap);
+
+                        combined.add(combinedMap);
+                    }
+
+                    return combined;
+                });
     }
 }

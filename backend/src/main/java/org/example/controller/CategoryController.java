@@ -3,6 +3,7 @@ package org.example.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.category.CategoryCreateDto;
 import org.example.dto.category.CategoryInfoDto;
 import org.example.dto.category.CategoryUpdateDto;
@@ -24,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -97,6 +99,24 @@ public class CategoryController {
         return bestCategories != null
                 ? new ResponseEntity<>(bestCategories, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(value = "/categories/getBestCategoriesExpenses")
+    public ResponseEntity<Mono<List<Map.Entry<String, Double>>>> getBestCategoriesExpenses(ServerWebExchange exchange) throws InterruptedException {
+        log.info("best categories expenses by months ");
+        final Mono<List<Map.Entry<String, Double>>> created = categoryService.getBestCategoriesExpenses(exchange);
+        return created != null
+                ? new ResponseEntity<>(created, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @GetMapping(value = "/categories/getBestCategoriesIncomes")
+    public ResponseEntity<Mono<List<Map.Entry<String, Double>>>> getBestCategoriesIncomes(ServerWebExchange exchange) throws InterruptedException {
+        log.info("best categories incomes by months ");
+        final Mono<List<Map.Entry<String, Double>>> created = categoryService.getBestCategoriesIncomes(exchange);
+        return created != null
+                ? new ResponseEntity<>(created, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
 }

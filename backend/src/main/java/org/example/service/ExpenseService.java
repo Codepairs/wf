@@ -2,68 +2,121 @@ package org.example.service;
 
 
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.expense.ExpenseCreateDto;
 import org.example.dto.expense.ExpenseInfoDto;
 import org.example.dto.expense.ExpenseUpdateDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
+import org.example.dto.income.IncomeCreateDto;
+import org.example.dto.income.IncomeInfoDto;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
+
 public class ExpenseService {
+    private final WebClient webClient;
+    private final UserService userService;
 
-/*
-    @Autowired
-    private RestTemplate restTemplate;
-
-    public ExpenseService (@Autowired @Qualifier("mainServiceRestTemplate") RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
-    public List readAll() {
-        return restTemplate.getForObject("http://localhost:8080/expenses", List.class);
-    }
-
-
-    public ExpenseInfoDto update(ExpenseUpdateDto expense, UUID id) {
-        return restTemplate.postForObject("http://localhost:8080/expenses/expensesById/" + id.toString(), expense, ExpenseInfoDto.class);
-    }
-
-
-    public ExpenseInfoDto delete(UUID id) {
-        return restTemplate.getForObject("http://localhost:8080/expenses/expensesById/" + id.toString(), ExpenseInfoDto.class);
+    public Flux<ExpenseInfoDto> getExpensesPagination(ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("token " + token);
+        Map<String, String> category = new HashMap<>();
+        return this.webClient.post()
+                .uri("/expenses/pagination")
+                .body(BodyInserters.fromValue(category))
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToFlux(ExpenseInfoDto.class);
     }
 
 
-    public ExpenseInfoDto create(ExpenseCreateDto expense) {
-        return restTemplate.postForObject("http://localhost:8080/expenses", expense, ExpenseInfoDto.class);
+
+    public Mono<ExpenseInfoDto> updateExpensesById(ExpenseUpdateDto expense, UUID id, ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("token " + token);
+
+        return this.webClient.put()
+                .uri("/expenses/expensesById?id={id}", id)
+                .body(expense, ExpenseUpdateDto.class)
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToMono(ExpenseInfoDto.class);
     }
 
 
-    public ResponseEntity<List<ExpenseInfoDto>> read_expenses(@PathVariable UUID id, HttpServletRequest request) {
-        String accessToken = (String) request.getSession().getAttribute("jwtToken");
-        if (accessToken != null) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + accessToken);
-            HttpEntity<Object> entity = new HttpEntity<>(headers);
-            return restTemplate.exchange("http://localhost:8080/users/expenses/" + id, HttpMethod.GET, entity, new ParameterizedTypeReference<List<ExpenseInfoDto>>(){});
-        } else {
-            // Handle unauthorized case here
-            return ResponseEntity.status(401).build();
-        }
+    public Mono<ExpenseInfoDto> deleteExpensesById(UUID id) {
+        return null;
     }
-*/
+    //return restTemplate.getForObject("http://localhost:8080/incomes/incomesById/" + id.toString(), IncomeInfoDto.class);
+
+
+
+    public Mono<UUID> createExpense(@RequestBody ExpenseCreateDto expense, ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("token create" + token);
+
+        return this.webClient.post()
+                .uri("/expenses")
+                .body(BodyInserters.fromValue(expense))
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToMono(UUID.class);
+    }
+
+
+    public Mono<ExpenseInfoDto> getExpenseById(UUID id, ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("token " + token);
+
+        return this.webClient.post()
+                .uri("/expenses/expensesById?id={id}", id)
+                .body(Mono.empty(), String.class)
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToMono(ExpenseInfoDto.class);
+    }
+
+    public Mono<List<Map<String, Double>>> getExpensesByMonths(ServerWebExchange exchange) throws InterruptedException {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("months token" + token);
+        log.info("months id " + userId);
+        Flux<ExpenseInfoDto> allExpenses = userService.getExpensesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
+
+
+        Mono<List<Map<String, Double>>> groupedExpensesByMonths = allExpenses
+                .groupBy(expense -> {
+                    // Extract month from date string
+                    return expense.getGetDate().getMonthValue();
+                })
+                .flatMap(group -> group.reduce(0.0, (acc, expense) -> acc + expense.getValue())
+                        .map(sum -> Map.of(group.key().toString(), sum)))
+                .collectList();
+
+        // Subscribe to process the data (optional)
+        groupedExpensesByMonths.subscribe();
+
+        return groupedExpensesByMonths;
+    }
+
+
 
 }

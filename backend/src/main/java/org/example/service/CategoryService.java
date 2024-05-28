@@ -160,33 +160,65 @@ public class CategoryService {
         return top3Categories;
     }
 
+    public Mono<List<Map.Entry<String, Double>>> getBestCategoriesIncomes(ServerWebExchange exchange) throws InterruptedException {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("best token" + token);
+        log.info("best id " + userId);
+        Flux<IncomeInfoDto> allIncomes = userService.getIncomesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
 
+        Mono<List<Map.Entry<String, Double>>> groupedIncomes = allIncomes
+                .groupBy(IncomeInfoDto::getCategory)
+                .flatMap(group -> group.reduce(0.0, (acc, income) -> acc + income.getValue())
+                        .map(sum -> Map.entry(group.key().getName(), sum))) // Use Map.entry instead of Map.of
+                .collectList();
 
+        log.info("groupedIncomes " + groupedIncomes.toString());
 
-        // Calculate total expenses per category (as Mono)
-        /*
-        Flux<Map.Entry<String, Double>> totalExpensesByCategory = allExpenses
-                .collectList()
-                .map(expenses -> expenses.stream()
-                        .collect(Collectors.groupingBy(e -> e.getCategory().getName(),
-                                Collectors.summingDouble(ExpenseInfoDto::getValue))))
-                .flatMapMany(map -> Flux.fromIterable(map.entrySet())); // Convert Mono<Map> to Flux<Map.Entry>
+        // Сортируем категории по сумме в порядке убывания и ограничиваемся тремя
+        Mono<List<Map.Entry<String, Double>>> top3Categories = groupedIncomes
+                .map(merged -> merged.stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(3)
+                        .collect(Collectors.toList()))
+                .doOnNext(top3 -> top3.forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue())));
 
-        // Calculate total incomes per category (as Flux)
-        Flux<Map.Entry<String, Double>> totalIncomesByCategory = allIncomes
-                .collectList()
-                .map(incomes -> incomes.stream()
-                        .collect(Collectors.groupingBy(i -> i.getCategory().getName(),
-                                Collectors.summingDouble(IncomeInfoDto::getValue))))
-                .flatMapMany(map -> Flux.fromIterable(map.entrySet()));
+        // Subscribe to the Mono to process the top 3 categories
+        top3Categories.subscribe();
 
-
-        log.info("incomes " + totalIncomesByCategory.collectList().toString());
-        // Combine expenses and incomes using flatMap
-        return totalExpensesByCategory;
-
-         */
-
+        return top3Categories;
     }
+
+    public Mono<List<Map.Entry<String, Double>>> getBestCategoriesExpenses(ServerWebExchange exchange) throws InterruptedException {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("best token" + token);
+        log.info("best id " + userId);
+        Flux<ExpenseInfoDto> allExpenses = userService.getExpensesById(exchange).doOnNext(data -> System.out.println("Поток данных завершен" + data));
+
+        Mono<List<Map.Entry<String, Double>>> groupedExpenses = allExpenses
+                .groupBy(ExpenseInfoDto::getCategory) // Assuming getCategory exists in ExpenseInfoDto
+                .flatMap(group -> group.reduce(0.0, (acc, expense) -> acc + expense.getValue())
+                        .map(sum -> Map.entry(group.key().getName(), sum)))
+                .collectList();
+
+        log.info("groupedExpenses " + groupedExpenses.toString());
+
+        // Сортируем категории по сумме в порядке убывания и ограничиваемся тремя
+        Mono<List<Map.Entry<String, Double>>> top3Categories = groupedExpenses
+                .map(merged -> merged.stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(3)
+                        .collect(Collectors.toList()))
+                .doOnNext(top3 -> top3.forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue())));
+
+        // Subscribe to the Mono to process the top 3 categories
+        top3Categories.subscribe();
+
+        return top3Categories;
+    }
+
+
+}
 
 

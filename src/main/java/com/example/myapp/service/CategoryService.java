@@ -75,4 +75,6 @@ public interface CategoryService {
     List<ExpenseInfoDto> getExpenses(UUID categoryId) throws NotFoundByIdException;
 
     List<CategoryInfoDto> getByFilter(List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyCategoriesException;
+
+    CategoryInfoDto getCategoryByName(String name) throws SQLUniqueException;
 }

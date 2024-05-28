@@ -25,10 +25,8 @@ public class MappingUtils {
     private CategoryRepository categoryRepository;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
     @Autowired
     private UserRepository userRepository;
-
 
     public Category mapToCategory(CategoryInfoDto categoryInfoDto) {
         return Category.builder().name(categoryInfoDto.getName()).build();

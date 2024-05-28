@@ -92,6 +92,7 @@ public class IncomeServiceImpl implements IncomeService {
         if (!incomeRepository.existsById(id)) {
             throw new NotFoundByIdException("Expense with id " + id + " not found");
         }
+
         return mappingUtils.mapToIncomeInfoDto(incomeRepository.getReferenceById(id));
     }
 

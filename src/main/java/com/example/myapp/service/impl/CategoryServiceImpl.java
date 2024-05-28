@@ -19,6 +19,7 @@ import com.example.myapp.search.strategy.PredicateStrategy;
 import com.example.myapp.service.CategoryService;
 import com.example.myapp.utils.MappingUtils;
 import jakarta.persistence.criteria.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,11 +29,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.data.util.CastUtils.cast;
 
 @Service
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
@@ -101,7 +104,14 @@ public class CategoryServiceImpl implements CategoryService {
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundByIdException("Category with id " + id + " not found");
         }
+        /*
+        Optional<Category> deleted = categoryRepository.findById(id);
+        deleted.get().getIncomes().removeIf(category -> category.getId() == id);
+        deleted.get().getExpenses().removeIf(category -> category.getId() == id);
         categoryRepository.deleteById(id);
+        */
+
+
         return id;
     }
 
@@ -152,6 +162,15 @@ public class CategoryServiceImpl implements CategoryService {
         PageRequest request = PageRequest.of(page, size, pageable.getSort());
         Page<Category> categories = categoryRepository.findAll(specification, request);
         return categories.getContent().stream().map(mappingUtils::mapToCategoryInfoDto).toList();
+    }
+
+    @Override
+    public CategoryInfoDto getCategoryByName(String name) throws SQLUniqueException {
+        log.info("Category name: {}", name);
+        if (!categoryRepository.existsByName(name)) {
+            return mappingUtils.mapToCategoryInfoDto(categoryRepository.findById(this.create(new CategoryCreateDto(name))).get());
+        }
+        return mappingUtils.mapToCategoryInfoDto(categoryRepository.findByName(name));
     }
 
 }

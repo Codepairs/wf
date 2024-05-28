@@ -40,12 +40,11 @@ public class SecurityConfiguration {
                 .authorizeRequests((auth) -> auth
                         .requestMatchers(HttpMethod.POST, AuthenticationConfigConstants.SIGN_UP_URL).permitAll()
                         .anyRequest().authenticated()
-
                         .and()
                         .addFilter(new JWTAuthenticationFilter(authenticationManager, userRepository))
                         .addFilter(new JWTAuthorizationFilter(authenticationManager))
                 )
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                //.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()

@@ -88,4 +88,10 @@ public class CategoryController {
     public ResponseEntity<List<CategoryInfoDto>> getByFilter(@Valid @RequestBody List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyCategoriesException {
         return new ResponseEntity<>(categoryService.getByFilter(conditions, pageable), HttpStatus.OK);
     }
+
+    @GetMapping("/categoryByName")
+    public ResponseEntity<CategoryInfoDto> getCategoryByName(@RequestParam(value = "name") @Valid @PathVariable String name) throws SQLUniqueException {
+        CategoryInfoDto category = categoryService.getCategoryByName(name);
+        return new ResponseEntity<>(category, HttpStatus.OK);
+    }
 }

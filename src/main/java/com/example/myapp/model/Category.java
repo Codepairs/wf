@@ -26,7 +26,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "category_name")
+    @Column(name = "category_name", unique = true)
     private String name;
 
     @Column(name = "category_last_update")

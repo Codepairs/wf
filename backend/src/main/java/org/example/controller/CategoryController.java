@@ -41,10 +41,19 @@ public class CategoryController {
     }
 
 
-    @GetMapping(value = "/categories/categoriesById/{id}")
+    @GetMapping(value = "/categories/categoriesById{id}")
     public ResponseEntity<Mono<CategoryInfoDto>> read(@PathVariable(name = "id") UUID id, ServerWebExchange exchange) {
 
         final Mono<CategoryInfoDto> category = categoryService.getCategoryById(id, exchange);
+        return category != null
+                ? new ResponseEntity<>(category, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(value = "/categories/categoryByName")
+    public ResponseEntity<Mono<CategoryInfoDto>> readByName(@RequestParam(value = "name") @Valid @PathVariable String name, ServerWebExchange exchange) {
+
+        final Mono<CategoryInfoDto> category = categoryService.getCategoryByName(name, exchange);
         return category != null
                 ? new ResponseEntity<>(category, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);

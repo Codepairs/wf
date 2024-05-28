@@ -61,7 +61,18 @@ public class CategoryService {
         String userId = exchange.getRequest().getHeaders().getFirst("UserId");
         log.info("category token " + token);
         return webClient.get().
-                uri("/categories/categoryById/" + id, CategoryInfoDto.class)
+                uri("/categories/categoryById?id=" + id, CategoryInfoDto.class)
+                .header("Authorization",  token)
+                .retrieve()
+                .bodyToMono(CategoryInfoDto.class);
+    }
+
+    public Mono<CategoryInfoDto> getCategoryByName(String name, ServerWebExchange exchange) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String userId = exchange.getRequest().getHeaders().getFirst("UserId");
+        log.info("category token " + token);
+        return webClient.get().
+                uri("/categories/categoryByName?name=" + name, CategoryInfoDto.class)
                 .header("Authorization",  token)
                 .retrieve()
                 .bodyToMono(CategoryInfoDto.class);

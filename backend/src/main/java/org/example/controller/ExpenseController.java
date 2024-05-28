@@ -65,7 +65,7 @@ public class ExpenseController {
 
 
     @PostMapping(value = "/expenses")
-    public ResponseEntity<Mono<UUID>> createExpense(@Valid @RequestBody ExpenseCreateDto expense, ServerWebExchange exchange) {
+    public ResponseEntity<Mono<UUID>> createExpense(@RequestBody ExpenseCreateDto expense, ServerWebExchange exchange) {
         log.info("create expense " + expense);
         final Mono<UUID> created = expenseService.createExpense(expense, exchange);
         return created != null

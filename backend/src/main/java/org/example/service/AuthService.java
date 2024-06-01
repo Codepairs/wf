@@ -33,18 +33,9 @@ public class AuthService {
                 .toEntity(String.class)
                 .doOnError(err -> log.error(err.getMessage()))
                 .flatMap(responseEntity -> { // Используем flatMap вместо block
-                    //log.info(this.webClient.get().headers().toString());
                     Map headersMap = new HashMap<>();
                     headersMap.put("Authorization", responseEntity.getHeaders().get("Authorization").get(0));
                     headersMap.put("UserId", responseEntity.getHeaders().get("UserId").get(0));
-                    //headersMap.put("Access-Control-Allow-Origin", "http://localhost:3000");
-                    //headersMap.put("Access-Control-Allow-Credentials", "true");
-
-                    //Access-Control-Allow-Origin : http://localhost:3000
-                    //Access-Control-Allow-Credentials : true
-                    //Access-Control-Allow-Methods : GET, POST, OPTIONS
-                    //Access-Control-Allow-Headers : Origin, Content-Type, Accept
-
                     log.info(headersMap.toString());
 
                     exchange.getResponse().getHeaders().add("Authorization", (String) headersMap.get("Authorization"));

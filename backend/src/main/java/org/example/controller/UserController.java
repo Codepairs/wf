@@ -67,6 +67,7 @@ public class UserController {
 
     @PostMapping(value = "/incomesInLastThreeDays")
     public ResponseEntity<Flux<IncomeInfoDto>> getIncomesInLastThreeDays(ServerWebExchange exchange) {
+        log.info("incomes 3 days ");
         Flux<IncomeInfoDto> incomes = userService.getIncomesInLastThreeDays(exchange);
         return incomes != null
                 ? new ResponseEntity<>(incomes, HttpStatus.OK)

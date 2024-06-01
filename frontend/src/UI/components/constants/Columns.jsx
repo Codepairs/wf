@@ -1,22 +1,18 @@
 export const COLUMNS = [
-    {
-      Header: 'Сумма',
-      accessor: 'postId',
-    },
-    {
-      Header: 'Категория',
-      accessor: 'id',
-    },
-    {
-      Header: 'Дата',
-      accessor: 'name',
-    },
-    {
-      Header: 'Время',
-      accessor: 'email',
-    },
-    {
-      Header: 'Получатель',
-      accessor: 'body',
-    }
-  ];
+  {
+    Header: 'Сумма',
+    accessor: 'value',
+  },
+  {
+    Header: 'Категория',
+    accessor: 'categoryId',
+  },
+  {
+    Header: 'Дата и время',
+    accessor: 'getDate',
+  },
+  {
+    Header: 'Получатель',
+    accessor: 'comment',
+  }
+];

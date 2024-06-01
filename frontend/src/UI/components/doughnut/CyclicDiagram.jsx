@@ -1,11 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Chart } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-
+import Cookies from 'js-cookie';
 ChartJS.register(ArcElement, Tooltip, Legend);
-const fetchData = async () => {
+const fetchData = async (url) => {
   try {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users?_limit=4`); // Заменить на реальный URL сервера
+    const jwtToken = Cookies.get('jwtToken');
+    // Получаем userId из куки
+    const userId = Cookies.get('userId');
+    if (jwtToken && userId) {
+      // Вы можете использовать jwtToken и userId здесь
+      console.log('jwtToken:', jwtToken);
+      console.log('userId:', userId);
+    } else {
+      // Обработка ситуации, когда куки не содержат необходимых данных
+      console.log('Данные не найдены в куки');
+    }
+    
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': jwtToken,
+        'UserId': userId
+      }
+    });
     const data = await response.json();
     return data;
   } catch (error) {
@@ -33,14 +50,14 @@ const options = {
     },
   },
 };
-const CyclicDiagram = () => {
+const CyclicDiagram = ({url}) => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchDataFromServer = async () => {
-      const newData = await fetchData();
+      const newData = await fetchData(url);
       console.log(newData);
       setData(newData);
     };
@@ -50,12 +67,21 @@ const CyclicDiagram = () => {
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
+  const labels = [];
+  const datas = [];
+
+  // Преобразование данных из JSON в формат, необходимый для построения диаграммы
+  data.forEach(item => {
+      const key = Object.keys(item)[0];
+      labels.push(key);
+      datas.push(item[key]);
+  });
 
   const chartData = {
-    labels: data.map(data => data.name),
+    labels: labels,
     datasets: [{
       label: "count",
-      data: data.map(data => data.id),
+      data: datas,
       options: options,
       backgroundColor: [
         'rgba(255, 170, 117)',

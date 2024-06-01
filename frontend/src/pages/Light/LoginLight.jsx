@@ -1,6 +1,7 @@
 import React, { useContext, useState, Suspense, startTranslation } from "react";
 import { AuthContext } from "../../context";
 import style from "../../styles/Light/Login.module.css";
+import Cookies from 'js-cookie';
 import MyButton from "../../UI/components/button/MyButton";
 import MyInput from "../../UI/components/input/MyInput";
 import axios from 'axios';
@@ -14,13 +15,13 @@ const LoginLight = () => {
     // состояния для авторизации (об это я подумаю позже)
     const { isAuth, setIsAuth } = useContext(AuthContext);
     // переменные 
-    const [loginData, setLoginData] = useState({ username: '', password: '' });
+    const [loginData, setLoginData] = useState({ name: '', password: '' });
     // не помню зачем делала, но пусть пока будут
     const [submitted, setSubmitted] = useState(false);
     // для чтения логина из поля ввода
     const handleUsernameChange = (event) => {
-        const username = event.target.value;
-        setLoginData({ ...loginData, username });
+        const name = event.target.value;
+        setLoginData({ ...loginData, name: name });
     };
     // для чтения пароля из поля ввода
     const handlePasswordChange = (event) => {
@@ -36,25 +37,32 @@ const LoginLight = () => {
         event.preventDefault();
         setSubmitted(true);
 
-        const { username, password } = loginData;
+        const { name: name, password } = loginData;
         console.log(loginData)
 
         // Проверка значений только если они были введены
-        if (username && password) {
+        if (name && password) {
             try {
-                const response = await axios.post('https://postman-echo.com/post', {
-                    username,
+                const response = await axios.post('http://localhost:8082/login', {
+                    name,
                     password
                 });
+                const jsonData = response.data;
+            
+            // Извлекаем jwtToken и userId из данных
+            const token = jsonData.Authorization;
+            const userId = jsonData.UserId;
 
-                console.log(response.data);
-                if (response.data && response.data.success) {
-                    console.log(response.data);
-                    console.log(response.data.success);
+             // Сохраняем jwtToken и userId в куки
+             Cookies.set('jwtToken', token);
+             Cookies.set('userId', userId);
+            // Сохраняем jwtToken и userId в переменные для дальнейшего использования
+            // здесь вы можете сделать что-то с полученными данными, например, отправить их в стейт или хранилище
+            console.log(token);
+            console.log(userId);
 
-                } else {
-                    alert('Неправильный логин или пароль');
-                }
+
+                handleRedirectToMain();
             } catch (error) {
                 alert('Произошла ошибка при входе. Пожалуйста, попробуйте позже.');
             }
@@ -83,21 +91,29 @@ const LoginLight = () => {
     };
     // проверка корректны ли данные, которые введены в поля логина и пароля
     const [showForgotPassword, setShowForgotPassword] = useState(false);
-    const handleLogin = () => {
-        const { username, password } = loginData;
-        console.log(username, password);
-        if (username === 'TestUser' || password === '123') {
-            handleRedirectToMain();
-        } else {
-            // когда-нибудь тут будет проверка :)
-            if (false) {
-                setShowForgotPassword(false); // а пока что я няшка <3
-            } else {
-                // Некорректный логин или пароль
+    const handleLogin = async () => {
+            const { name, password } = loginData;
+            console.log(name, password);
+
+            try {
+                const response = await axios.post('http://localhost:8082/login', {
+                                    name,
+                                    password
+                          });
+
+                if (response.ok) {
+                    // Успешный ответ от сервера
+                    handleRedirectToMain();
+                } else {
+                    // Ошибка от сервера
+                    setShowForgotPassword(true);
+                }
+            } catch (error) {
+                console.error('Ошибка при выполнении запроса:', error);
+                // Обработка ошибки, например, показ сообщения об ошибке
                 setShowForgotPassword(true);
             }
-        }
-    };
+        };
     return (
         <div>
             <Suspense fallback={<div>Loading...</div>}>

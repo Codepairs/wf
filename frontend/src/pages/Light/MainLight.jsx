@@ -119,11 +119,11 @@ const MainLight = () => {
                                 </MyButton>
                             </nav>
                             <div style={{ display: "flex", flexDirection: "row" }}>
-                                <div className={style.FirstDought}>
-                                    <CyclicDiagram labels={['Зарплата', 'Премия', 'Подарки', 'Акции']} />
+                            <div className={style.FirstDought}>
+                                    <CyclicDiagram url="http://localhost:8082/categories/getBestCategoriesExpenses" labels={['Зарплата', 'Премия', 'Подарки', 'Акции']} />
                                 </div>
                                 <div className={style.SecondDought}>
-                                    <CyclicDiagram labels={['Еда', 'Транспорт', 'Лекарства', 'Остальное']} />
+                                    <CyclicDiagram  url="http://localhost:8082/categories/getBestCategoriesIncomes" labels={['Еда', 'Транспорт', 'Лекарства', 'Остальное']} />
                                 </div>
                             </div>
 
